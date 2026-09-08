@@ -394,30 +394,6 @@
   .about-lab p { color: var(--muted); font-weight: 300; max-width: 520px; }
   .about-lab p + p { margin-top: 0.8rem; }
 
-  /* STACK — same component as arcnode.nl */
-  .stack {
-    padding: 4.5rem 3rem;
-    border-top: 1px solid var(--border);
-    display: grid;
-    grid-template-columns: 1fr 2.6fr;
-    gap: 3rem;
-    align-items: start;
-  }
-  .stack-label { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.1em; color: var(--muted); }
-  .stack-items { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .stack-tag {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    letter-spacing: 0.06em;
-    padding: 0.45rem 0.9rem;
-    background: #fff;
-    border: 1px solid var(--border);
-    color: var(--fg);
-    border-radius: 2px;
-    transition: border-color 0.2s, color 0.2s;
-  }
-  .stack-tag:hover { border-color: var(--teal); color: var(--teal-dark); }
-
   /* FOOTER */
   footer {
     padding: 1.5rem 3rem;
@@ -447,7 +423,7 @@
     .nav-home { padding-left: 1rem; }
     .intro { padding: 4.5rem 1.5rem 2.5rem; }
     .log-section { padding: 0 1.5rem 3.5rem; }
-    .about-lab, .stack { grid-template-columns: 1fr; gap: 1.2rem; padding: 3rem 1.5rem; }
+    .about-lab { grid-template-columns: 1fr; gap: 1.2rem; padding: 3rem 1.5rem; }
     footer { padding: 1.5rem; }
     .log-row[aria-expanded="true"] + .log-detail { grid-template-columns: 1fr; }
   }
@@ -465,7 +441,6 @@
     <ul class="nav-links">
       <li><a href="#log">Log</a></li>
       <li><a href="#about">About</a></li>
-      <li><a href="#stack">Stack</a></li>
     </ul>
     <a href="https://arcnode.nl" class="nav-home">← arcnode.nl</a>
   </div>
@@ -596,25 +571,6 @@
     <p>Building a small working version is often the fastest way to understand a problem.</p>
     <p>The Lab is where I can test an integration, architecture or product idea before knowing whether it deserves to become something larger. That might lead to a product, become useful in client work, or simply leave behind a technical pattern worth reusing.</p>
     <p>The point isn't to make every experiment succeed. It's to learn something concrete by making it work.</p>
-  </div>
-</section>
-
-<!-- STACK -->
-<section class="stack" id="stack">
-  <p class="stack-label">Stack</p>
-  <div class="stack-items">
-    <span class="stack-tag">OpenEMS</span>
-    <span class="stack-tag">LoRaWAN</span>
-    <span class="stack-tag">ChirpStack</span>
-    <span class="stack-tag">Node-RED</span>
-    <span class="stack-tag">PostgreSQL</span>
-    <span class="stack-tag">InfluxDB</span>
-    <span class="stack-tag">DuckDB</span>
-    <span class="stack-tag">Grafana</span>
-    <span class="stack-tag">Loxone</span>
-    <span class="stack-tag">Supabase</span>
-    <span class="stack-tag">REST APIs</span>
-    <span class="stack-tag">Digital Twins</span>
   </div>
 </section>
 
