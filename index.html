@@ -264,10 +264,15 @@
     padding: 4px 0 16px 24px;
     border-bottom: 1px solid var(--panel-line);
   }
-  .log-row[aria-expanded="true"] + .log-detail { display: block; }
+  .log-row[aria-expanded="true"] + .log-detail {
+    display: grid;
+    grid-template-columns: minmax(260px, 480px) 1fr;
+    gap: 1.6rem 2.4rem;
+    align-items: start;
+  }
   .log-row:last-of-type + .log-detail { border-bottom: none; }
 
-  .log-detail p {
+  .log-body p {
     font-family: var(--sans);
     font-size: 13px;
     line-height: 1.7;
@@ -276,7 +281,7 @@
     margin-bottom: 0.7rem;
   }
 
-  .log-detail .todo-flag {
+  .log-body .todo-flag {
     font-family: var(--mono);
     font-size: 10.5px;
     color: var(--active);
@@ -286,7 +291,7 @@
   }
 
   /* PREVIEW — treated as a lab artefact, not marketing imagery. No device mockups. */
-  .preview { margin-bottom: 1.1rem; max-width: 560px; }
+  .preview { margin-bottom: 0; }
   .preview-label {
     font-family: var(--mono);
     font-size: 10px;
@@ -443,6 +448,7 @@
     .log-section { padding: 0 1.5rem 3.5rem; }
     .about-lab, .stack { grid-template-columns: 1fr; gap: 1.2rem; padding: 3rem 1.5rem; }
     footer { padding: 1.5rem; }
+    .log-row[aria-expanded="true"] + .log-detail { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -502,16 +508,18 @@
         <p class="preview-label">PREVIEW · SENSORCANVAS · LIVE BUILD</p>
         <div class="preview-box"><img src="sensor_preview.png" alt="SensorCanvas dashboard"></div>
       </div>
-      <p>A live playground for sensor data and digital twins. SensorCanvas started as an experiment in getting physical sensor data all the way from LoRaWAN devices into something that is actually useful to look at. Data is collected, normalised and presented in a live dashboard that mirrors the system being measured.</p>
-      <p>The interesting part isn't the dashboard itself, but the chain behind it: device → network → data processing → storage → interface.</p>
-      <div class="log-tags">
-        <span class="log-tag">LoRaWAN</span>
-        <span class="log-tag">ChirpStack</span>
-        <span class="log-tag">Node-RED</span>
-        <span class="log-tag">InfluxDB</span>
-        <span class="log-tag">Digital Twin</span>
+      <div class="log-body">
+        <p>A live playground for sensor data and digital twins. SensorCanvas started as an experiment in getting physical sensor data all the way from LoRaWAN devices into something that is actually useful to look at. Data is collected, normalised and presented in a live dashboard that mirrors the system being measured.</p>
+        <p>The interesting part isn't the dashboard itself, but the chain behind it: device → network → data processing → storage → interface.</p>
+        <div class="log-tags">
+          <span class="log-tag">LoRaWAN</span>
+          <span class="log-tag">ChirpStack</span>
+          <span class="log-tag">Node-RED</span>
+          <span class="log-tag">InfluxDB</span>
+          <span class="log-tag">Digital Twin</span>
+        </div>
+        <a class="log-action" href="https://sensorcanvas.arcnode.nl/sensor/" target="_blank" rel="noopener">OPEN LIVE EXPERIMENT ↗</a>
       </div>
-      <a class="log-action" href="https://sensorcanvas.arcnode.nl/sensor/" target="_blank" rel="noopener">OPEN LIVE EXPERIMENT ↗</a>
     </div>
 
     <div class="log-row" tabindex="0" role="button" aria-expanded="false" onclick="toggleRow(this)">
@@ -534,14 +542,16 @@
           <div class="preview-box">Telegram notification screenshot goes here.</div>
         </div>
       </div>
-      <p>A football scouting tool built around a database of roughly 18,000 players. ClubScout explores what happens when player data, transfer information and automated monitoring are brought into one workflow — clubs can inspect player profiles and receive notifications when something relevant changes.</p>
-      <p>The profile and the Telegram alert belong to the same system: the interface and the automated notification are two views on one pipeline, not two separate tools.</p>
-      <div class="log-tags">
-        <span class="log-tag">Next.js</span>
-        <span class="log-tag">TypeScript</span>
-        <span class="log-tag">PostgreSQL</span>
-        <span class="log-tag">Telegram</span>
-        <span class="log-tag">Data pipelines</span>
+      <div class="log-body">
+        <p>A football scouting tool built around a database of roughly 18,000 players. ClubScout explores what happens when player data, transfer information and automated monitoring are brought into one workflow — clubs can inspect player profiles and receive notifications when something relevant changes.</p>
+        <p>The profile and the Telegram alert belong to the same system: the interface and the automated notification are two views on one pipeline, not two separate tools.</p>
+        <div class="log-tags">
+          <span class="log-tag">Next.js</span>
+          <span class="log-tag">TypeScript</span>
+          <span class="log-tag">PostgreSQL</span>
+          <span class="log-tag">Telegram</span>
+          <span class="log-tag">Data pipelines</span>
+        </div>
       </div>
     </div>
 
@@ -552,7 +562,6 @@
       <span class="log-updated">— verify date —</span>
     </div>
     <div class="log-detail">
-      <p class="todo-flag">✎ Derived from a client news-monitoring proof of concept — kept fully generic here, no client name, branding or real data.</p>
       <div class="preview">
         <p class="preview-label">PIPELINE · MULTILINGUAL MEDIA TRIAGE</p>
         <div class="pipeline">
@@ -563,14 +572,17 @@
           <span class="pipeline-step">human review</span>
         </div>
       </div>
-      <p>An experiment in finding relevant incidents in multilingual news without asking an AI model to invent the underlying facts. The pipeline collects articles across languages, translates the parts needed for review, applies local language models for relevance classification and structured metadata, and presents candidates for human review.</p>
-      <p>The experiment is partly about a boundary: what can safely be automated, and what should remain a human decision?</p>
-      <div class="log-tags">
-        <span class="log-tag">Python</span>
-        <span class="log-tag">Ollama</span>
-        <span class="log-tag">Local LLMs</span>
-        <span class="log-tag">SQLite</span>
-        <span class="log-tag">Multilingual NLP</span>
+      <div class="log-body">
+        <p class="todo-flag">✎ Derived from a client news-monitoring proof of concept — kept fully generic here, no client name, branding or real data.</p>
+        <p>An experiment in finding relevant incidents in multilingual news without asking an AI model to invent the underlying facts. The pipeline collects articles across languages, translates the parts needed for review, applies local language models for relevance classification and structured metadata, and presents candidates for human review.</p>
+        <p>The experiment is partly about a boundary: what can safely be automated, and what should remain a human decision?</p>
+        <div class="log-tags">
+          <span class="log-tag">Python</span>
+          <span class="log-tag">Ollama</span>
+          <span class="log-tag">Local LLMs</span>
+          <span class="log-tag">SQLite</span>
+          <span class="log-tag">Multilingual NLP</span>
+        </div>
       </div>
     </div>
   </div>
