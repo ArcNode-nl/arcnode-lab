@@ -1,12 +1,628 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ArcNode Lab</title>
+    <link rel="icon" type="image/png" href="/flavicon.ico">
+    <link rel="apple-touch-icon" href="/flavicon.ico">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ArcNode / Lab — Experiments, prototypes & unfinished ideas.</title>
+    <meta name="description" content="Experiments, prototypes and unfinished ideas from ArcNode. Not case studies — proof of curiosity.">
+
+    <meta property="og:title" content="ArcNode / Lab">
+    <meta property="og:description" content="Experiments, prototypes and unfinished ideas.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lab.arcnode.nl">
+    <meta property="og:image" content="https://arcnode.nl/flavicon.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    /* Shared with arcnode.nl — do not diverge without updating both sites */
+    --bg: #f8f7f4;
+    --fg: #0e0e0e;
+    --teal: #00b8a9;
+    --teal-light: #e0f7f5;
+    --teal-dark: #007a6e;
+    --muted: #6b6b6b;
+    --border: #e0ddd8;
+    --mono: 'DM Mono', monospace;
+    --serif: 'DM Serif Display', serif;
+    --sans: 'DM Sans', sans-serif;
+
+    /* Lab-only — the dark panel from arcnode.nl's dashboard mock, promoted from decoration to primary surface */
+    --panel: #0d0f12;
+    --panel-head: #13171d;
+    --panel-border: #252b36;
+    --panel-line: #1a1f28;
+    --panel-text: #e2e8f0;
+    --panel-muted: #6b7a95;
+
+    --live: #00b8a9;
+    --active: #f59e0b;
+    --experiment: #60a5fa;
+    --archived: #6b7a95;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  a { color: inherit; }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 3rem;
+    background: rgba(248,247,244,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    text-decoration: none;
+  }
+
+  .nav-logo img { height: 28px; width: 28px; object-fit: contain; align-self: center; }
+
+  .nav-logo-text {
+    font-family: var(--mono);
+    font-size: 1.02rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--fg);
+  }
+  .nav-logo-text span { color: var(--teal); }
+
+  .nav-lab-tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    color: var(--panel-muted);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+  }
+
+  .nav-right { display: flex; align-items: center; gap: 2rem; }
+
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+
+  .nav-links a, .nav-home {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover, .nav-home:hover { color: var(--teal); }
+
+  .nav-home {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-left: 1px solid var(--border);
+    padding-left: 2rem;
+  }
+
+  /* INTRO — a README header, not a hero */
+  .intro {
+    padding: 6rem 3rem 3.5rem;
+    max-width: 760px;
+  }
+
+  .intro-mark {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    margin-bottom: 0.9rem;
+  }
+  .intro-mark span { color: var(--teal); }
+
+  .intro h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.1rem, 4vw, 3.1rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.1rem;
+  }
+
+  .intro p {
+    color: var(--muted);
+    font-weight: 300;
+    max-width: 540px;
+  }
+
+  .intro p + p { margin-top: 0.8rem; }
+
+  /* LOG — the centerpiece */
+  .log-section { padding: 0 3rem 5rem; }
+
+  .log-panel {
+    background: var(--panel);
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: var(--mono);
+    color: var(--panel-text);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.14), 0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  .log-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 16px;
+    height: 42px;
+    background: var(--panel-head);
+    border-bottom: 1px solid var(--panel-border);
+  }
+  .log-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .log-head-title {
+    margin-left: 8px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--panel-muted);
+  }
+  .log-head-status {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--live);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .log-head-status .blink {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--live);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .log-cols {
+    display: grid;
+    grid-template-columns: 110px 1fr 200px 140px;
+    padding: 10px 16px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--panel-muted);
+    border-bottom: 1px solid var(--panel-border);
+  }
+
+  .log-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 200px 140px;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--panel-line);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .log-row:last-child { border-bottom: none; }
+  .log-row:hover { background: var(--panel-head); }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .status-dot.hollow { background: transparent; border: 1.5px solid var(--archived); }
+  .status.live .status-dot { background: var(--live); }
+  .status.active .status-dot { background: var(--active); }
+  .status.experiment .status-dot { background: var(--experiment); }
+  .status.archived { color: var(--panel-muted); }
+
+  .log-project {
+    font-size: 13.5px;
+    color: var(--panel-text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .log-project .caret {
+    font-size: 10px;
+    color: var(--panel-muted);
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  .log-row[aria-expanded="true"] .caret { transform: rotate(90deg); }
+
+  .log-area { font-size: 11.5px; color: var(--panel-muted); }
+  .log-updated { font-size: 11px; color: var(--panel-muted); text-align: right; }
+
+  .log-detail {
+    grid-column: 1 / -1;
+    display: none;
+    padding: 4px 0 16px 24px;
+    border-bottom: 1px solid var(--panel-line);
+  }
+  .log-row[aria-expanded="true"] + .log-detail { display: block; }
+  .log-row:last-of-type + .log-detail { border-bottom: none; }
+
+  .log-detail p {
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--panel-text);
+    max-width: 560px;
+    margin-bottom: 0.7rem;
+  }
+
+  .log-detail .todo-flag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--active);
+    letter-spacing: 0.02em;
+    margin-bottom: 0.7rem;
+    max-width: 560px;
+  }
+
+  /* PREVIEW — treated as a lab artefact, not marketing imagery. No device mockups. */
+  .preview { margin-bottom: 1.1rem; max-width: 560px; }
+  .preview-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--panel-muted);
+    margin-bottom: 6px;
+  }
+  .preview-box {
+    aspect-ratio: 16 / 10;
+    background: var(--panel-head);
+    border: 1px dashed var(--panel-border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--panel-muted);
+  }
+  .preview-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 3px; }
+  .preview-box:has(img) { border-style: solid; padding: 0; }
+
+  .preview-split { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
+  .preview-split .preview-box { aspect-ratio: auto; height: 190px; }
+
+  /* Text pipeline — for experiments with no screenshot yet */
+  .pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    background: var(--panel-head);
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    padding: 1rem;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
+  }
+  .pipeline-step {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    padding: 0.4rem 0.6rem;
+    color: var(--panel-text);
+  }
+  .pipeline-arrow { color: var(--panel-muted); }
+
+  .log-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.9rem; }
+  .log-tag {
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    padding: 0.3rem 0.6rem;
+    background: var(--panel-head);
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    color: var(--panel-muted);
+  }
+
+  .log-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    color: var(--live);
+    text-decoration: none;
+    border-bottom: 1px solid var(--live);
+    padding-bottom: 2px;
+    width: fit-content;
+    transition: opacity 0.15s;
+  }
+  .log-action:hover { opacity: 0.7; }
+
+  @media (max-width: 720px) {
+    .log-cols { display: none; }
+    .log-row, .log-detail { grid-template-columns: 1fr; row-gap: 6px; }
+    .log-updated { text-align: left; }
+    .preview-split { grid-template-columns: 1fr; }
+  }
+
+  /* ABOUT-THE-LAB STRIP */
+  .about-lab {
+    padding: 4.5rem 3rem;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 3rem;
+  }
+  .about-lab h2 {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    line-height: 1.2;
+  }
+  .about-lab p { color: var(--muted); font-weight: 300; max-width: 520px; }
+  .about-lab p + p { margin-top: 0.8rem; }
+
+  /* STACK — same component as arcnode.nl */
+  .stack {
+    padding: 4.5rem 3rem;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 2.6fr;
+    gap: 3rem;
+    align-items: start;
+  }
+  .stack-label { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.1em; color: var(--muted); }
+  .stack-items { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .stack-tag {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    padding: 0.45rem 0.9rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--fg);
+    border-radius: 2px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .stack-tag:hover { border-color: var(--teal); color: var(--teal-dark); }
+
+  /* FOOTER */
+  footer {
+    padding: 1.5rem 3rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  footer p, footer a {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  footer a:hover { color: var(--teal); }
+  footer span { color: var(--teal); }
+
+  /* Keyboard focus visibility */
+  a:focus-visible, .log-row:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .nav-home { padding-left: 1rem; }
+    .intro { padding: 4.5rem 1.5rem 2.5rem; }
+    .log-section { padding: 0 1.5rem 3.5rem; }
+    .about-lab, .stack { grid-template-columns: 1fr; gap: 1.2rem; padding: 3rem 1.5rem; }
+    footer { padding: 1.5rem; }
+  }
+</style>
 </head>
 <body>
-  <h1>ArcNode Lab</h1>
-  <p>Prototypes, experiments, and interactive demos by ArcNode.</p>
+
+<nav>
+  <a href="https://arcnode.nl" class="nav-logo">
+    <img src="/arcnode_flavo.png" alt="ArcNode logo">
+    <span class="nav-logo-text">Arc<span>node</span></span>
+    <span class="nav-lab-tag">LAB</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#log">Log</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#stack">Stack</a></li>
+    </ul>
+    <a href="https://arcnode.nl" class="nav-home">← arcnode.nl</a>
+  </div>
+</nav>
+
+<!-- INTRO -->
+<section class="intro">
+  <p class="intro-mark">ARCNODE <span>/</span> LAB</p>
+  <h1>Experiments, prototypes<br>& unfinished ideas.</h1>
+  <p>I use small working systems to explore technologies, test assumptions and figure out how a problem behaves before deciding what should be built around it.</p>
+  <p>Some become products. Some become client work. Some just teach me something.</p>
+  <p>Not case studies, just proof of curiosity.</p>
+</section>
+
+<!-- LOG -->
+<section class="log-section" id="log">
+  <div class="log-panel">
+    <div class="log-head">
+      <span class="log-dot" style="background:#ef4444"></span>
+      <span class="log-dot" style="background:#f59e0b"></span>
+      <span class="log-dot" style="background:#22c55e"></span>
+      <span class="log-head-title">LAB · EXPERIMENT LOG</span>
+      <span class="log-head-status"><span class="blink"></span>1 LIVE · 1 ACTIVE · 1 EXPERIMENT</span>
+    </div>
+
+    <div class="log-cols">
+      <span>STATUS</span>
+      <span>PROJECT</span>
+      <span>AREA</span>
+      <span style="text-align:right">UPDATED</span>
+    </div>
+
+    <div class="log-row" tabindex="0" role="button" aria-expanded="true" onclick="toggleRow(this)">
+      <span class="status live"><span class="status-dot"></span>LIVE</span>
+      <span class="log-project"><span class="caret">▸</span>SensorCanvas</span>
+      <span class="log-area">IoT / Digital Twin</span>
+      <span class="log-updated">— verify date —</span>
+    </div>
+    <div class="log-detail">
+      <div class="preview">
+        <p class="preview-label">PREVIEW · SENSORCANVAS · LIVE BUILD</p>
+        <div class="preview-box"><img src="sensor_preview.png" alt="SensorCanvas dashboard"></div>
+      </div>
+      <p>A live playground for sensor data and digital twins. SensorCanvas started as an experiment in getting physical sensor data all the way from LoRaWAN devices into something that is actually useful to look at. Data is collected, normalised and presented in a live dashboard that mirrors the system being measured.</p>
+      <p>The interesting part isn't the dashboard itself, but the chain behind it: device → network → data processing → storage → interface.</p>
+      <div class="log-tags">
+        <span class="log-tag">LoRaWAN</span>
+        <span class="log-tag">ChirpStack</span>
+        <span class="log-tag">Node-RED</span>
+        <span class="log-tag">InfluxDB</span>
+        <span class="log-tag">Digital Twin</span>
+      </div>
+      <a class="log-action" href="https://sensorcanvas.arcnode.nl/sensor/" target="_blank" rel="noopener">OPEN LIVE EXPERIMENT ↗</a>
+    </div>
+
+    <div class="log-row" tabindex="0" role="button" aria-expanded="false" onclick="toggleRow(this)">
+      <span class="status active"><span class="status-dot"></span>ACTIVE</span>
+      <span class="log-project"><span class="caret">▸</span>ClubScout</span>
+      <span class="log-area">Football Data / Automation</span>
+      <span class="log-updated">— verify date —</span>
+    </div>
+    <div class="log-detail">
+      <!-- Replace the two boxes below with:
+           <img src="/lab/media/clubscout-profile.png" alt="ClubScout player profile">
+           <img src="/lab/media/clubscout-telegram.png" alt="ClubScout Telegram alert"> -->
+      <div class="preview preview-split">
+        <div>
+          <p class="preview-label">PREVIEW · CLUBSCOUT · PLAYER PROFILE</p>
+          <div class="preview-box">Player-profile screenshot goes here.</div>
+        </div>
+        <div>
+          <p class="preview-label">PREVIEW · CLUBSCOUT · TELEGRAM ALERT</p>
+          <div class="preview-box">Telegram notification screenshot goes here.</div>
+        </div>
+      </div>
+      <p>A football scouting tool built around a database of roughly 18,000 players. ClubScout explores what happens when player data, transfer information and automated monitoring are brought into one workflow — clubs can inspect player profiles and receive notifications when something relevant changes.</p>
+      <p>The profile and the Telegram alert belong to the same system: the interface and the automated notification are two views on one pipeline, not two separate tools.</p>
+      <div class="log-tags">
+        <span class="log-tag">Next.js</span>
+        <span class="log-tag">TypeScript</span>
+        <span class="log-tag">PostgreSQL</span>
+        <span class="log-tag">Telegram</span>
+        <span class="log-tag">Data pipelines</span>
+      </div>
+    </div>
+
+    <div class="log-row" tabindex="0" role="button" aria-expanded="false" onclick="toggleRow(this)">
+      <span class="status experiment"><span class="status-dot"></span>EXPERIMENT</span>
+      <span class="log-project"><span class="caret">▸</span>Multilingual Media Triage</span>
+      <span class="log-area">Local AI / Information Retrieval</span>
+      <span class="log-updated">— verify date —</span>
+    </div>
+    <div class="log-detail">
+      <p class="todo-flag">✎ Derived from a client news-monitoring proof of concept — kept fully generic here, no client name, branding or real data.</p>
+      <div class="preview">
+        <p class="preview-label">PIPELINE · MULTILINGUAL MEDIA TRIAGE</p>
+        <div class="pipeline">
+          <span class="pipeline-step">source article</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">translation</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">classification</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">confidence / reasoning</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">human review</span>
+        </div>
+      </div>
+      <p>An experiment in finding relevant incidents in multilingual news without asking an AI model to invent the underlying facts. The pipeline collects articles across languages, translates the parts needed for review, applies local language models for relevance classification and structured metadata, and presents candidates for human review.</p>
+      <p>The experiment is partly about a boundary: what can safely be automated, and what should remain a human decision?</p>
+      <div class="log-tags">
+        <span class="log-tag">Python</span>
+        <span class="log-tag">Ollama</span>
+        <span class="log-tag">Local LLMs</span>
+        <span class="log-tag">SQLite</span>
+        <span class="log-tag">Multilingual NLP</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT THE LAB -->
+<section class="about-lab" id="about">
+  <h2>Why a Lab</h2>
+  <div>
+    <p>Building a small working version is often the fastest way to understand a problem.</p>
+    <p>The Lab is where I can test an integration, architecture or product idea before knowing whether it deserves to become something larger. That might lead to a product, become useful in client work, or simply leave behind a technical pattern worth reusing.</p>
+    <p>The point isn't to make every experiment succeed. It's to learn something concrete by making it work.</p>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="stack" id="stack">
+  <p class="stack-label">Stack</p>
+  <div class="stack-items">
+    <span class="stack-tag">OpenEMS</span>
+    <span class="stack-tag">LoRaWAN</span>
+    <span class="stack-tag">ChirpStack</span>
+    <span class="stack-tag">Node-RED</span>
+    <span class="stack-tag">PostgreSQL</span>
+    <span class="stack-tag">InfluxDB</span>
+    <span class="stack-tag">DuckDB</span>
+    <span class="stack-tag">Grafana</span>
+    <span class="stack-tag">Loxone</span>
+    <span class="stack-tag">Supabase</span>
+    <span class="stack-tag">REST APIs</span>
+    <span class="stack-tag">Digital Twins</span>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 <span>Arcnode</span> Lab</p>
+  <a href="mailto:info@arcnode.nl">info@arcnode.nl</a>
+  <a href="https://arcnode.nl">arcnode.nl</a>
+</footer>
+
+<script>
+  function toggleRow(row) {
+    const expanded = row.getAttribute('aria-expanded') === 'true';
+    document.querySelectorAll('.log-row').forEach(r => r.setAttribute('aria-expanded', 'false'));
+    row.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+  }
+  document.querySelectorAll('.log-row').forEach(row => {
+    row.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRow(row); }
+    });
+  });
+</script>
+
 </body>
 </html>
