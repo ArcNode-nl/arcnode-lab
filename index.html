@@ -318,7 +318,8 @@
   .preview-box:has(img) { border-style: solid; padding: 0; }
 
   .preview-split { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
-  .preview-split .preview-box { aspect-ratio: auto; height: 190px; }
+  .preview-split .preview-box { aspect-ratio: auto; height: 380px; }
+  .preview-split .preview-box img { object-fit: contain; }
 
   /* Text pipeline — for experiments with no screenshot yet */
   .pipeline {
@@ -535,11 +536,11 @@
       <div class="preview preview-split">
         <div>
           <p class="preview-label">PREVIEW · CLUBSCOUT · PLAYER PROFILE</p>
-          <div class="preview-box">Player-profile screenshot goes here.</div>
+          <div class="preview-box"><img src="player.png" alt="ClubScout player profile"></div>
         </div>
         <div>
           <p class="preview-label">PREVIEW · CLUBSCOUT · TELEGRAM ALERT</p>
-          <div class="preview-box">Telegram notification screenshot goes here.</div>
+          <div class="preview-box"><img src="telegram.png" alt="ClubScout Telegram alert"></div>
         </div>
       </div>
       <div class="log-body">
