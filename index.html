@@ -159,72 +159,46 @@
   .intro p + p { margin-top: 0.8rem; }
 
   /* LOG — the centerpiece */
-  .log-section { padding: 0 3rem 5rem; }
-
-  .log-panel {
-    background: var(--panel);
-    border-radius: 6px;
-    overflow: hidden;
-    font-family: var(--mono);
-    color: var(--panel-text);
-    box-shadow: 0 24px 64px rgba(0,0,0,0.14), 0 4px 16px rgba(0,0,0,0.08);
-  }
-
-  .log-head {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 0 16px;
-    height: 42px;
-    background: var(--panel-head);
-    border-bottom: 1px solid var(--panel-border);
-  }
-  .log-dot { width: 8px; height: 8px; border-radius: 50%; }
-  .log-head-title {
-    margin-left: 8px;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--panel-muted);
-  }
-  .log-head-status {
-    margin-left: auto;
-    font-size: 11px;
-    color: var(--live);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .log-head-status .blink {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--live);
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.35; }
-  }
+  .log-section { padding: 0 3rem 5rem; font-family: var(--mono); color: var(--panel-text); }
 
   .log-cols {
     display: grid;
     grid-template-columns: 110px 1fr 200px 140px;
-    padding: 10px 16px;
+    padding: 0 16px 8px;
     font-size: 10px;
     letter-spacing: 0.1em;
-    color: var(--panel-muted);
-    border-bottom: 1px solid var(--panel-border);
+    color: var(--muted);
+  }
+
+  .log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .log-block {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    overflow: hidden;
   }
 
   .log-row {
     display: grid;
     grid-template-columns: 110px 1fr 200px 140px;
     align-items: center;
+    width: 100%;
     padding: 14px 16px;
-    border-bottom: 1px solid var(--panel-line);
+    border: none;
+    background: none;
+    font-family: inherit;
+    color: inherit;
+    text-align: left;
     cursor: pointer;
     transition: background 0.15s;
   }
-  .log-row:last-child { border-bottom: none; }
   .log-row:hover { background: var(--panel-head); }
+  .log-block.is-open .log-row { border-bottom: 1px solid var(--panel-border); }
 
   .status {
     display: flex;
@@ -259,20 +233,12 @@
   .log-updated { font-size: 11px; color: var(--panel-muted); text-align: right; }
 
   .log-detail {
-    grid-column: 1 / -1;
     display: none;
-    padding: 4px 0 16px 24px;
-    border-bottom: 1px solid var(--panel-line);
+    padding: 4px 16px 20px 40px;
   }
-  .log-row[aria-expanded="true"] + .log-detail {
-    display: grid;
-    grid-template-columns: minmax(260px, 480px) 1fr;
-    gap: 1.6rem 2.4rem;
-    align-items: start;
-  }
-  .log-row:last-of-type + .log-detail { border-bottom: none; }
+  .log-block.is-open .log-detail { display: block; }
 
-  .log-body p {
+  .log-detail p {
     font-family: var(--sans);
     font-size: 13px;
     line-height: 1.7;
@@ -281,7 +247,7 @@
     margin-bottom: 0.7rem;
   }
 
-  .log-body .todo-flag {
+  .log-detail .todo-flag {
     font-family: var(--mono);
     font-size: 10.5px;
     color: var(--active);
@@ -291,7 +257,7 @@
   }
 
   /* PREVIEW — treated as a lab artefact, not marketing imagery. No device mockups. */
-  .preview { margin-bottom: 0; }
+  .preview { margin-bottom: 1.1rem; max-width: 560px; }
   .preview-label {
     font-family: var(--mono);
     font-size: 10px;
@@ -315,11 +281,9 @@
     color: var(--panel-muted);
   }
   .preview-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 3px; }
-  .preview-box:has(img) { border-style: solid; padding: 0; }
 
   .preview-split { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
-  .preview-split .preview-box { aspect-ratio: auto; height: 380px; }
-  .preview-split .preview-box img { object-fit: contain; }
+  .preview-split .preview-box { aspect-ratio: auto; height: 190px; }
 
   /* Text pipeline — for experiments with no screenshot yet */
   .pipeline {
@@ -371,11 +335,177 @@
   }
   .log-action:hover { opacity: 0.7; }
 
+  /* MMT DEMO — a generic recreation of a review-queue UI, treated as an embedded artefact */
+  .mmt-demo {
+    background: #fbfaf7;
+    border: 1px solid #e2ded5;
+    border-radius: 4px;
+    overflow: hidden;
+    color: #1a1a1a;
+  }
+
+  .mmt-header {
+    background: #1c2b3a;
+    color: #e8ecf1;
+    padding: 0.9rem 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .mmt-brand { display: flex; align-items: baseline; gap: 0.6rem; }
+  .mmt-brand-mark {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    color: #8fa4bd;
+    border: 1px solid #3a4c60;
+    border-radius: 2px;
+    padding: 0.1rem 0.35rem;
+  }
+  .mmt-brand-title { font-family: var(--serif); font-style: italic; font-size: 1.05rem; }
+  .mmt-stats { font-family: var(--mono); font-size: 10px; color: #8fa4bd; }
+  .mmt-stats span { margin-left: 8px; }
+
+  .mmt-toolbar {
+    background: #f2f0ea;
+    border-bottom: 1px solid #e2ded5;
+    padding: 0.55rem 1.1rem;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  .mmt-select {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    color: #4a463d;
+    background: #fff;
+    border: 1px solid #d8d3c8;
+    border-radius: 3px;
+    padding: 0.3rem 0.6rem;
+  }
+  .mmt-run-btn {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #fff;
+    background: #c9963d;
+    border-radius: 3px;
+    padding: 0.3rem 0.7rem;
+  }
+
+  .mmt-cards { padding: 0.9rem 1.1rem; display: flex; flex-direction: column; gap: 0.7rem; }
+
+  .mmt-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid #e9e5db;
+    border-radius: 4px;
+    padding: 0.85rem 1rem;
+  }
+
+  .mmt-badge {
+    position: absolute;
+    top: 0.8rem;
+    right: 1rem;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.08em;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    border: 1px solid transparent;
+  }
+  .mmt-badge.confirmed { background: #eef3ee; color: #3f6b52; border-color: #cfe0d3; }
+  .mmt-badge.suggested { background: #f2f0ea; color: #7a756b; border-color: #e2ded5; }
+  .mmt-badge.uncertain { background: #faf1df; color: #a3762c; border-color: #ecdcb6; }
+
+  .mmt-title {
+    display: block;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #1a1a1a;
+    text-decoration: none;
+    max-width: 82%;
+    line-height: 1.4;
+    margin-bottom: 0.4rem;
+  }
+  .mmt-title:hover { color: var(--teal-dark); text-decoration: underline; }
+
+  .mmt-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: #8a8578;
+    display: flex;
+    gap: 0.7rem;
+    margin-bottom: 0.5rem;
+  }
+  .mmt-meta strong { color: #4a463d; }
+
+  .log-detail .mmt-reasoning {
+    font-family: var(--sans);
+    font-style: italic;
+    font-size: 12px;
+    color: #4a463d;
+    background: #f6f4ee;
+    border-radius: 3px;
+    padding: 0.5rem 0.65rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .mmt-toggle-original {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: #a3762c;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-bottom: 0.4rem;
+  }
+  .mmt-original {
+    display: none;
+  }
+  .log-detail .mmt-original {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: #4a463d;
+    background: #f6f4ee;
+    border-radius: 3px;
+    padding: 0.5rem 0.65rem;
+    margin-bottom: 0.5rem;
+  }
+  .mmt-card.show-original .mmt-original { display: block; }
+
+  .mmt-source {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 11px;
+    color: #6b6b6b;
+    text-decoration: underline;
+    margin-bottom: 0.6rem;
+  }
+
+  .mmt-actions { display: flex; gap: 0.5rem; }
+  .mmt-btn {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 0.3rem 0.7rem;
+    border-radius: 3px;
+    border: 1px solid #d8d3c8;
+    color: #4a463d;
+  }
+  .mmt-btn.confirm { background: #3f6b52; color: #fff; border-color: #3f6b52; }
+  .mmt-btn.reject { color: #a3453b; border-color: #e0bdb8; }
+
   @media (max-width: 720px) {
     .log-cols { display: none; }
-    .log-row, .log-detail { grid-template-columns: 1fr; row-gap: 6px; }
+    .log-row { grid-template-columns: 1fr; row-gap: 6px; }
+    .log-detail { padding-left: 16px; }
     .log-updated { text-align: left; }
     .preview-split { grid-template-columns: 1fr; }
+    .mmt-title { max-width: 100%; }
   }
 
   /* ABOUT-THE-LAB STRIP */
@@ -393,6 +523,30 @@
   }
   .about-lab p { color: var(--muted); font-weight: 300; max-width: 520px; }
   .about-lab p + p { margin-top: 0.8rem; }
+
+  /* STACK — same component as arcnode.nl */
+  .stack {
+    padding: 4.5rem 3rem;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 2.6fr;
+    gap: 3rem;
+    align-items: start;
+  }
+  .stack-label { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.1em; color: var(--muted); }
+  .stack-items { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .stack-tag {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    padding: 0.45rem 0.9rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--fg);
+    border-radius: 2px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .stack-tag:hover { border-color: var(--teal); color: var(--teal-dark); }
 
   /* FOOTER */
   footer {
@@ -423,9 +577,8 @@
     .nav-home { padding-left: 1rem; }
     .intro { padding: 4.5rem 1.5rem 2.5rem; }
     .log-section { padding: 0 1.5rem 3.5rem; }
-    .about-lab { grid-template-columns: 1fr; gap: 1.2rem; padding: 3rem 1.5rem; }
+    .about-lab, .stack { grid-template-columns: 1fr; gap: 1.2rem; padding: 3rem 1.5rem; }
     footer { padding: 1.5rem; }
-    .log-row[aria-expanded="true"] + .log-detail { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -441,6 +594,7 @@
     <ul class="nav-links">
       <li><a href="#log">Log</a></li>
       <li><a href="#about">About</a></li>
+      <li><a href="#stack">Stack</a></li>
     </ul>
     <a href="https://arcnode.nl" class="nav-home">← arcnode.nl</a>
   </div>
@@ -457,87 +611,82 @@
 
 <!-- LOG -->
 <section class="log-section" id="log">
-  <div class="log-panel">
-    <div class="log-head">
-      <span class="log-dot" style="background:#ef4444"></span>
-      <span class="log-dot" style="background:#f59e0b"></span>
-      <span class="log-dot" style="background:#22c55e"></span>
-      <span class="log-head-title">LAB · EXPERIMENT LOG</span>
-      <span class="log-head-status"><span class="blink"></span>1 LIVE · 1 ACTIVE · 1 EXPERIMENT</span>
-    </div>
+  <div class="log-cols">
+    <span>STATUS</span>
+    <span>PROJECT</span>
+    <span>AREA</span>
+    <span style="text-align:right">UPDATED</span>
+  </div>
 
-    <div class="log-cols">
-      <span>STATUS</span>
-      <span>PROJECT</span>
-      <span>AREA</span>
-      <span style="text-align:right">UPDATED</span>
-    </div>
-
-    <div class="log-row" tabindex="0" role="button" aria-expanded="true" onclick="toggleRow(this)">
-      <span class="status live"><span class="status-dot"></span>LIVE</span>
-      <span class="log-project"><span class="caret">▸</span>SensorCanvas</span>
-      <span class="log-area">IoT / Digital Twin</span>
-      <span class="log-updated">— verify date —</span>
-    </div>
-    <div class="log-detail">
+  <div class="log-list">
+    <div class="log-block">
+      <button class="log-row" aria-expanded="false" onclick="toggleBlock(this)">
+        <span class="status live"><span class="status-dot"></span>LIVE</span>
+        <span class="log-project"><span class="caret">▸</span>SensorCanvas</span>
+        <span class="log-area">IoT / Digital Twin</span>
+        <span class="log-updated">— verify date —</span>
+      </button>
+      <div class="log-detail">
+      <!-- Replace this placeholder box with: <img src="/lab/media/sensorcanvas.png" alt="SensorCanvas dashboard"> -->
       <div class="preview">
         <p class="preview-label">PREVIEW · SENSORCANVAS · LIVE BUILD</p>
-        <div class="preview-box"><img src="sensor_preview.png" alt="SensorCanvas dashboard"></div>
+        <div class="preview-box">Real screenshot of SensorCanvas goes here.<br>No device mockup — just the interface itself.</div>
       </div>
-      <div class="log-body">
-        <p>A live playground for sensor data and digital twins. SensorCanvas started as an experiment in getting physical sensor data all the way from LoRaWAN devices into something that is actually useful to look at. Data is collected, normalised and presented in a live dashboard that mirrors the system being measured.</p>
-        <p>The interesting part isn't the dashboard itself, but the chain behind it: device → network → data processing → storage → interface.</p>
-        <div class="log-tags">
-          <span class="log-tag">LoRaWAN</span>
-          <span class="log-tag">ChirpStack</span>
-          <span class="log-tag">Node-RED</span>
-          <span class="log-tag">InfluxDB</span>
-          <span class="log-tag">Digital Twin</span>
-        </div>
-        <a class="log-action" href="https://sensorcanvas.arcnode.nl/sensor/" target="_blank" rel="noopener">OPEN LIVE EXPERIMENT ↗</a>
+      <p>A live playground for sensor data and digital twins. SensorCanvas started as an experiment in getting physical sensor data all the way from LoRaWAN devices into something that is actually useful to look at. Data is collected, normalised and presented in a live dashboard that mirrors the system being measured.</p>
+      <p>The interesting part isn't the dashboard itself, but the chain behind it: device → network → data processing → storage → interface.</p>
+      <div class="log-tags">
+        <span class="log-tag">LoRaWAN</span>
+        <span class="log-tag">ChirpStack</span>
+        <span class="log-tag">Node-RED</span>
+        <span class="log-tag">InfluxDB</span>
+        <span class="log-tag">Digital Twin</span>
+      </div>
+      <a class="log-action" href="https://sensorcanvas.arcnode.nl/sensor/" target="_blank" rel="noopener">OPEN LIVE EXPERIMENT ↗</a>
       </div>
     </div>
 
-    <div class="log-row" tabindex="0" role="button" aria-expanded="false" onclick="toggleRow(this)">
-      <span class="status active"><span class="status-dot"></span>ACTIVE</span>
-      <span class="log-project"><span class="caret">▸</span>ClubScout</span>
-      <span class="log-area">Football Data / Automation</span>
-      <span class="log-updated">— verify date —</span>
-    </div>
-    <div class="log-detail">
+    <div class="log-block">
+      <button class="log-row" aria-expanded="false" onclick="toggleBlock(this)">
+        <span class="status active"><span class="status-dot"></span>ACTIVE</span>
+        <span class="log-project"><span class="caret">▸</span>ClubScout</span>
+        <span class="log-area">Football Data / Automation</span>
+        <span class="log-updated">— verify date —</span>
+      </button>
+      <div class="log-detail">
       <!-- Replace the two boxes below with:
            <img src="/lab/media/clubscout-profile.png" alt="ClubScout player profile">
            <img src="/lab/media/clubscout-telegram.png" alt="ClubScout Telegram alert"> -->
       <div class="preview preview-split">
         <div>
           <p class="preview-label">PREVIEW · CLUBSCOUT · PLAYER PROFILE</p>
-          <div class="preview-box"><img src="player.png" alt="ClubScout player profile"></div>
+          <div class="preview-box">Player-profile screenshot goes here.</div>
         </div>
         <div>
           <p class="preview-label">PREVIEW · CLUBSCOUT · TELEGRAM ALERT</p>
-          <div class="preview-box"><img src="telegram.png" alt="ClubScout Telegram alert"></div>
+          <div class="preview-box">Telegram notification screenshot goes here.</div>
         </div>
       </div>
-      <div class="log-body">
-        <p>A football scouting tool built around a database of roughly 18,000 players. ClubScout explores what happens when player data, transfer information and automated monitoring are brought into one workflow — clubs can inspect player profiles and receive notifications when something relevant changes.</p>
-        <p>The profile and the Telegram alert belong to the same system: the interface and the automated notification are two views on one pipeline, not two separate tools.</p>
-        <div class="log-tags">
-          <span class="log-tag">Next.js</span>
-          <span class="log-tag">TypeScript</span>
-          <span class="log-tag">PostgreSQL</span>
-          <span class="log-tag">Telegram</span>
-          <span class="log-tag">Data pipelines</span>
-        </div>
+      <p>A football scouting tool built around a database of roughly 18,000 players. ClubScout explores what happens when player data, transfer information and automated monitoring are brought into one workflow — clubs can inspect player profiles and receive notifications when something relevant changes.</p>
+      <p>The profile and the Telegram alert belong to the same system: the interface and the automated notification are two views on one pipeline, not two separate tools.</p>
+      <div class="log-tags">
+        <span class="log-tag">Next.js</span>
+        <span class="log-tag">TypeScript</span>
+        <span class="log-tag">PostgreSQL</span>
+        <span class="log-tag">Telegram</span>
+        <span class="log-tag">Data pipelines</span>
+      </div>
       </div>
     </div>
 
-    <div class="log-row" tabindex="0" role="button" aria-expanded="false" onclick="toggleRow(this)">
-      <span class="status experiment"><span class="status-dot"></span>EXPERIMENT</span>
-      <span class="log-project"><span class="caret">▸</span>Multilingual Media Triage</span>
-      <span class="log-area">Local AI / Information Retrieval</span>
-      <span class="log-updated">— verify date —</span>
-    </div>
-    <div class="log-detail">
+    <div class="log-block">
+      <button class="log-row" aria-expanded="false" onclick="toggleBlock(this)">
+        <span class="status experiment"><span class="status-dot"></span>EXPERIMENT</span>
+        <span class="log-project"><span class="caret">▸</span>Multilingual Media Triage</span>
+        <span class="log-area">Local AI / Information Retrieval</span>
+        <span class="log-updated">— verify date —</span>
+      </button>
+      <div class="log-detail">
+      <p class="todo-flag">✎ Derived from a client news-monitoring proof of concept — kept fully generic here, no client name, branding or real data.</p>
       <div class="preview">
         <p class="preview-label">PIPELINE · MULTILINGUAL MEDIA TRIAGE</p>
         <div class="pipeline">
@@ -548,17 +697,85 @@
           <span class="pipeline-step">human review</span>
         </div>
       </div>
-      <div class="log-body">
-        <p class="todo-flag">✎ Derived from a client news-monitoring proof of concept — kept fully generic here, no client name, branding or real data.</p>
-        <p>An experiment in finding relevant incidents in multilingual news without asking an AI model to invent the underlying facts. The pipeline collects articles across languages, translates the parts needed for review, applies local language models for relevance classification and structured metadata, and presents candidates for human review.</p>
-        <p>The experiment is partly about a boundary: what can safely be automated, and what should remain a human decision?</p>
-        <div class="log-tags">
-          <span class="log-tag">Python</span>
-          <span class="log-tag">Ollama</span>
-          <span class="log-tag">Local LLMs</span>
-          <span class="log-tag">SQLite</span>
-          <span class="log-tag">Multilingual NLP</span>
+      <p>An experiment in finding relevant incidents in multilingual news without asking an AI model to invent the underlying facts. The pipeline collects articles across languages, translates the parts needed for review, applies local language models for relevance classification and structured metadata, and presents candidates for human review.</p>
+      <p>The experiment is partly about a boundary: what can safely be automated, and what should remain a human decision?</p>
+
+      <p class="preview-label" style="margin-top:0.4rem;">PREVIEW · GENERIC REVIEW QUEUE · BATTERY &amp; EV SUPPLY CHAIN DEMO</p>
+      <div class="mmt-demo">
+        <div class="mmt-header">
+          <div class="mmt-brand">
+            <span class="mmt-brand-mark">DEMO · v1</span>
+            <span class="mmt-brand-title">Media Review</span>
+          </div>
+          <div class="mmt-stats">5 in queue &nbsp; <span>en 3</span> <span>fr 1</span> <span>sv 1</span></div>
         </div>
+        <div class="mmt-toolbar">
+          <span class="mmt-select">Last 7 days</span>
+          <span class="mmt-run-btn">Run new scan</span>
+        </div>
+
+        <div class="mmt-cards">
+
+          <article class="mmt-card">
+            <span class="mmt-badge confirmed">CONFIRMED</span>
+            <a class="mmt-title" href="https://www.energy-storage.news/hithium-signs-e400-million-spain-battery-gigafactory-investment-agreement-after-two-year-courtship/" target="_blank" rel="noopener">Hithium signs €400m Spain battery gigafactory deal</a>
+            <div class="mmt-meta"><span>en</span><span>Spain</span><span>2026-04-17</span><span><strong>confidence 8/10</strong></span><span>id: a3f0c1</span></div>
+            <p class="mmt-reasoning">New cell manufacturing capacity announced for Navarre, tied to an existing storage-integration partnership.</p>
+            <a class="mmt-source" href="https://www.energy-storage.news/hithium-signs-e400-million-spain-battery-gigafactory-investment-agreement-after-two-year-courtship/" target="_blank" rel="noopener">Energy-Storage.News</a>
+            <div class="mmt-actions"><span class="mmt-btn confirm">Confirm</span><span class="mmt-btn">Uncertain</span><span class="mmt-btn reject">Reject</span></div>
+          </article>
+
+          <article class="mmt-card">
+            <span class="mmt-badge confirmed">CONFIRMED</span>
+            <a class="mmt-title" href="https://france3-regions.franceinfo.fr/hauts-de-france/nord-0/dunkerque/la-gigafactory-verkor-est-inauguree-pres-de-dunkerque-c-est-le-debut-d-une-nouvelle-ere-industrielle-3265034.html" target="_blank" rel="noopener">Verkor's battery gigafactory opens near Dunkirk</a>
+            <div class="mmt-meta"><span>fr</span><span>France</span><span>2025-12-11</span><span><strong>confidence 9/10</strong></span><span>id: 7c2ee1</span></div>
+            <p class="mmt-reasoning">First cells produced at a new French site, framed locally as a milestone for European battery sovereignty.</p>
+            <a class="mmt-toggle-original">Show original ▾</a>
+            <p class="mmt-original">La gigafactory Verkor est inaugurée près de Dunkerque</p>
+            <a class="mmt-source" href="https://france3-regions.franceinfo.fr/hauts-de-france/nord-0/dunkerque/la-gigafactory-verkor-est-inauguree-pres-de-dunkerque-c-est-le-debut-d-une-nouvelle-ere-industrielle-3265034.html" target="_blank" rel="noopener">France 3 Régions</a>
+            <div class="mmt-actions"><span class="mmt-btn confirm">Confirm</span><span class="mmt-btn">Uncertain</span><span class="mmt-btn reject">Reject</span></div>
+          </article>
+
+          <article class="mmt-card">
+            <span class="mmt-badge suggested">SUGGESTED</span>
+            <a class="mmt-title" href="https://www.automotorsport.se/nyheter/northvolt-kop-klart-lyten-batterifabrik-skelleftea/" target="_blank" rel="noopener">Former Northvolt plant to restart, targeting 600 new hires</a>
+            <div class="mmt-meta"><span>sv</span><span>Sweden</span><span>2026-02-27</span><span><strong>confidence 8/10</strong></span><span>id: 9d41b0</span></div>
+            <p class="mmt-reasoning">Site changes ownership after last year's bankruptcy; production restart planned under the new buyer.</p>
+            <a class="mmt-toggle-original">Show original ▾</a>
+            <p class="mmt-original">Northvolt-fabriken räddas – siktar på 600 nyanställningar</p>
+            <a class="mmt-source" href="https://www.automotorsport.se/nyheter/northvolt-kop-klart-lyten-batterifabrik-skelleftea/" target="_blank" rel="noopener">Automotorsport.se</a>
+            <div class="mmt-actions"><span class="mmt-btn confirm">Confirm</span><span class="mmt-btn">Uncertain</span><span class="mmt-btn reject">Reject</span></div>
+          </article>
+
+          <article class="mmt-card">
+            <span class="mmt-badge uncertain">UNCERTAIN</span>
+            <a class="mmt-title" href="https://balkangreenenergynews.com/protests-in-serbia-against-lithium-mining-to-culminate-in-belgrade-rally/" target="_blank" rel="noopener">Protests in Serbia against lithium mining to culminate in Belgrade rally</a>
+            <div class="mmt-meta"><span>en</span><span>Serbia</span><span>2026-06-05</span><span><strong>confidence 7/10</strong></span><span>id: 2f88ae</span></div>
+            <p class="mmt-reasoning">Renewed opposition to a major European lithium project — relevant upstream, before it reaches any battery factory.</p>
+            <a class="mmt-source" href="https://balkangreenenergynews.com/protests-in-serbia-against-lithium-mining-to-culminate-in-belgrade-rally/" target="_blank" rel="noopener">Balkan Green Energy News</a>
+            <div class="mmt-actions"><span class="mmt-btn confirm">Confirm</span><span class="mmt-btn">Uncertain</span><span class="mmt-btn reject">Reject</span></div>
+          </article>
+
+          <article class="mmt-card">
+            <span class="mmt-badge confirmed">CONFIRMED</span>
+            <a class="mmt-title" href="https://www.euronews.com/business/2026/02/07/stellantis-backed-acc-shelves-plans-to-open-battery-gigafactories-in-italy-and-germany" target="_blank" rel="noopener">Stellantis-backed ACC shelves plans for gigafactories in Italy and Germany</a>
+            <div class="mmt-meta"><span>en</span><span>Italy</span><span>2026-02-07</span><span><strong>confidence 9/10</strong></span><span>id: 5b01c7</span></div>
+            <p class="mmt-reasoning">A previously announced site is being wound down — a useful signal for how many planned gigafactories actually reach production.</p>
+            <a class="mmt-source" href="https://www.euronews.com/business/2026/02/07/stellantis-backed-acc-shelves-plans-to-open-battery-gigafactories-in-italy-and-germany" target="_blank" rel="noopener">Euronews</a>
+            <div class="mmt-actions"><span class="mmt-btn confirm">Confirm</span><span class="mmt-btn">Uncertain</span><span class="mmt-btn reject">Reject</span></div>
+          </article>
+
+        </div>
+      </div>
+      <p class="todo-flag" style="margin-top:0.8rem;">✎ Real articles, real links — the confidence scores, ids and review badges are illustrative, not output from a real model run.</p>
+
+      <div class="log-tags">
+        <span class="log-tag">Python</span>
+        <span class="log-tag">Ollama</span>
+        <span class="log-tag">Local LLMs</span>
+        <span class="log-tag">SQLite</span>
+        <span class="log-tag">Multilingual NLP</span>
+      </div>
       </div>
     </div>
   </div>
@@ -574,6 +791,25 @@
   </div>
 </section>
 
+<!-- STACK -->
+<section class="stack" id="stack">
+  <p class="stack-label">Stack</p>
+  <div class="stack-items">
+    <span class="stack-tag">OpenEMS</span>
+    <span class="stack-tag">LoRaWAN</span>
+    <span class="stack-tag">ChirpStack</span>
+    <span class="stack-tag">Node-RED</span>
+    <span class="stack-tag">PostgreSQL</span>
+    <span class="stack-tag">InfluxDB</span>
+    <span class="stack-tag">DuckDB</span>
+    <span class="stack-tag">Grafana</span>
+    <span class="stack-tag">Loxone</span>
+    <span class="stack-tag">Supabase</span>
+    <span class="stack-tag">REST APIs</span>
+    <span class="stack-tag">Digital Twins</span>
+  </div>
+</section>
+
 <footer>
   <p>© 2026 <span>Arcnode</span> Lab</p>
   <a href="mailto:info@arcnode.nl">info@arcnode.nl</a>
@@ -581,15 +817,25 @@
 </footer>
 
 <script>
-  function toggleRow(row) {
-    const expanded = row.getAttribute('aria-expanded') === 'true';
+  function toggleBlock(btn) {
+    const block = btn.closest('.log-block');
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
     document.querySelectorAll('.log-row').forEach(r => r.setAttribute('aria-expanded', 'false'));
-    row.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+    document.querySelectorAll('.log-block').forEach(b => b.classList.remove('is-open'));
+    if (!expanded) {
+      btn.setAttribute('aria-expanded', 'true');
+      block.classList.add('is-open');
+    }
   }
   document.querySelectorAll('.log-row').forEach(row => {
     row.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleRow(row); }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleBlock(row); }
     });
+  });
+
+  // Demo review queue — "Show original" reveal (visual only, no live pipeline behind it)
+  document.querySelectorAll('.mmt-toggle-original').forEach(t => {
+    t.addEventListener('click', () => t.closest('.mmt-card').classList.toggle('show-original'));
   });
 </script>
 
