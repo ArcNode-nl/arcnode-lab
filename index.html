@@ -282,7 +282,15 @@
   }
   .preview-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 3px; }
 
-  .preview-split { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; }
+  .preview-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+  }
+
+  .preview-split { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; align-items: start; }
   .preview-split .preview-box { aspect-ratio: auto; height: 190px; }
 
   /* Text pipeline — for experiments with no screenshot yet */
@@ -627,10 +635,9 @@
         <span class="log-updated">— verify date —</span>
       </button>
       <div class="log-detail">
-      <!-- Replace this placeholder box with: <img src="/lab/media/sensorcanvas.png" alt="SensorCanvas dashboard"> -->
       <div class="preview">
         <p class="preview-label">PREVIEW · SENSORCANVAS · LIVE BUILD</p>
-        <div class="preview-box">Real screenshot of SensorCanvas goes here.<br>No device mockup — just the interface itself.</div>
+        <img class="preview-img" src="sensor_preview.png" alt="SensorCanvas 3D live sensor dashboard showing temperature, humidity and CO2 by zone">
       </div>
       <p>A live playground for sensor data and digital twins. SensorCanvas started as an experiment in getting physical sensor data all the way from LoRaWAN devices into something that is actually useful to look at. Data is collected, normalised and presented in a live dashboard that mirrors the system being measured.</p>
       <p>The interesting part isn't the dashboard itself, but the chain behind it: device → network → data processing → storage → interface.</p>
@@ -653,17 +660,14 @@
         <span class="log-updated">— verify date —</span>
       </button>
       <div class="log-detail">
-      <!-- Replace the two boxes below with:
-           <img src="/lab/media/clubscout-profile.png" alt="ClubScout player profile">
-           <img src="/lab/media/clubscout-telegram.png" alt="ClubScout Telegram alert"> -->
       <div class="preview preview-split">
         <div>
           <p class="preview-label">PREVIEW · CLUBSCOUT · PLAYER PROFILE</p>
-          <div class="preview-box">Player-profile screenshot goes here.</div>
+          <img class="preview-img" src="player.png" alt="ClubScout player profile card">
         </div>
         <div>
           <p class="preview-label">PREVIEW · CLUBSCOUT · TELEGRAM ALERT</p>
-          <div class="preview-box">Telegram notification screenshot goes here.</div>
+          <img class="preview-img" src="telegram.png" alt="ClubScout Telegram bot notifications about transfer rumours">
         </div>
       </div>
       <p>A football scouting tool built around a database of roughly 18,000 players. ClubScout explores what happens when player data, transfer information and automated monitoring are brought into one workflow — clubs can inspect player profiles and receive notifications when something relevant changes.</p>
