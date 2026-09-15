@@ -293,6 +293,16 @@
   .preview-split { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; align-items: start; }
   .preview-split .preview-box { aspect-ratio: auto; height: 190px; }
 
+  /* Image left, text right — used for SensorCanvas and ClubScout */
+  .log-columns {
+    display: grid;
+    grid-template-columns: minmax(280px, 55%) 1fr;
+    gap: 1.75rem;
+    align-items: start;
+  }
+  .log-columns .preview { max-width: none; margin-bottom: 0; }
+  .log-columns .log-detail-text p { max-width: none; }
+
   /* Text pipeline — for experiments with no screenshot yet */
   .pipeline {
     display: flex;
@@ -513,6 +523,7 @@
     .log-detail { padding-left: 16px; }
     .log-updated { text-align: left; }
     .preview-split { grid-template-columns: 1fr; }
+    .log-columns { grid-template-columns: 1fr; }
     .mmt-title { max-width: 100%; }
   }
 
@@ -635,10 +646,12 @@
         <span class="log-updated">— verify date —</span>
       </button>
       <div class="log-detail">
+      <div class="log-columns">
       <div class="preview">
         <p class="preview-label">PREVIEW · SENSORCANVAS · LIVE BUILD</p>
         <img class="preview-img" src="sensor_preview.png" alt="SensorCanvas 3D live sensor dashboard showing temperature, humidity and CO2 by zone">
       </div>
+      <div class="log-detail-text">
       <p>A live playground for sensor data and digital twins. SensorCanvas started as an experiment in getting physical sensor data all the way from LoRaWAN devices into something that is actually useful to look at. Data is collected, normalised and presented in a live dashboard that mirrors the system being measured.</p>
       <p>The interesting part isn't the dashboard itself, but the chain behind it: device → network → data processing → storage → interface.</p>
       <div class="log-tags">
@@ -650,6 +663,8 @@
       </div>
       <a class="log-action" href="https://sensorcanvas.arcnode.nl/sensor/" target="_blank" rel="noopener">OPEN LIVE EXPERIMENT ↗</a>
       </div>
+      </div>
+      </div>
     </div>
 
     <div class="log-block">
@@ -660,6 +675,7 @@
         <span class="log-updated">— verify date —</span>
       </button>
       <div class="log-detail">
+      <div class="log-columns">
       <div class="preview preview-split">
         <div>
           <p class="preview-label">PREVIEW · CLUBSCOUT · PLAYER PROFILE</p>
@@ -670,6 +686,7 @@
           <img class="preview-img" src="telegram.png" alt="ClubScout Telegram bot notifications about transfer rumours">
         </div>
       </div>
+      <div class="log-detail-text">
       <p>A football scouting tool built around a database of roughly 18,000 players. ClubScout explores what happens when player data, transfer information and automated monitoring are brought into one workflow — clubs can inspect player profiles and receive notifications when something relevant changes.</p>
       <p>The profile and the Telegram alert belong to the same system: the interface and the automated notification are two views on one pipeline, not two separate tools.</p>
       <div class="log-tags">
@@ -678,6 +695,8 @@
         <span class="log-tag">PostgreSQL</span>
         <span class="log-tag">Telegram</span>
         <span class="log-tag">Data pipelines</span>
+      </div>
+      </div>
       </div>
       </div>
     </div>
