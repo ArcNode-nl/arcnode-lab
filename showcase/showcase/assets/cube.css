@@ -1,0 +1,25 @@
+/* ArcNode Knowledge Cube / visually independent, touch-first 3D knowledge map */
+.cube-shell{border:1px solid #314b62;background:#070f1b;border-radius:14px;overflow:hidden;color:#eaf7ff;box-shadow:0 20px 55px #0004}
+.cube-head{padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:14px;background:linear-gradient(115deg,#102c3b,#0b1728 55%,#111d35)}
+.cube-head-copy{display:grid;gap:5px}.cube-head-copy b{font-size:18px;letter-spacing:.3px}.cube-kicker{font-size:10px;color:#48dde8;letter-spacing:2.1px;font-weight:700}.cube-head-meta{font-size:10px;color:#91a9c0;letter-spacing:1px;white-space:nowrap}
+.cube-layout{display:grid;grid-template-columns:minmax(0,1fr) 285px;min-height:580px;border-top:1px solid #294157}
+.cube-stage{min-width:0;position:relative;min-height:580px;background:radial-gradient(ellipse at 50% 49%,#173a50 0%,#0b2134 47%,#060d19 95%);overflow:hidden}
+.cube-canvas{display:block;touch-action:none;width:100%;height:100%;cursor:grab;outline:none}.cube-canvas.is-grabbing{cursor:grabbing}
+.cube-toolbar{position:absolute;left:15px;top:15px;right:15px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:none}
+.cube-chip{pointer-events:auto;color:#9db9ca;background:#0c1f32eb;border:1px solid #294c62;border-radius:6px;padding:8px 10px;font-size:11px;cursor:pointer;white-space:nowrap;font-family:inherit}
+.cube-chip.active{color:#d9fdff;border-color:#1bc6ce;background:#123c4c}.cube-chip:hover{border-color:#37bcca}
+.cube-bottom{position:absolute;bottom:15px;left:15px;right:15px;display:flex;align-items:end;justify-content:space-between;gap:10px;pointer-events:none}
+.cube-hint{color:#91b4c5;font-size:10px;line-height:1.65;letter-spacing:.2px;max-width:300px;background:#081726b8;padding:9px 12px;border:1px solid #24445a;border-radius:7px}
+.cube-controls{pointer-events:auto;display:flex;gap:6px}.cube-control{border:1px solid #356175;border-radius:7px;background:#0b2030e8;color:#d3f7ff;padding:8px 11px;min-height:37px;font-size:12px;font-family:inherit;cursor:pointer}
+.cube-control:hover{border-color:#31cfdb}.cube-control.active{color:#55e2eb;border-color:#1aa2b3}
+.cube-inspector{padding:20px 19px 17px;border-left:1px solid #263a51;background:#0c1828;display:flex;flex-direction:column;gap:15px}
+.cube-inspector-meta{font-size:10px;letter-spacing:1.3px;color:#7391a8}.cube-node-group{font-size:11px;display:inline-flex;align-items:center;gap:7px;color:#8ecad5}.cube-node-group:before{content:'';width:8px;height:8px;border-radius:50%;background:var(--node-accent,#32c9d3)}
+.cube-inspector h2{font-size:23px;line-height:1.16;letter-spacing:-.5px;margin:0;color:#f3fbff}.cube-node-desc{color:#b6cadd;font-size:12px;line-height:1.7;margin:0}
+.cube-inspector h3{margin:0 0 9px;color:#7a9cb0;font-size:10px;font-weight:700;letter-spacing:1.4px}
+.cube-link-list{display:grid;gap:5px}.cube-related{width:100%;text-align:left;border:1px solid #273e53;background:#12283a;padding:10px 10px;color:#d0e7f1;border-radius:7px;cursor:pointer;font-family:inherit;font-size:11px;line-height:1.45;display:flex;justify-content:space-between;align-items:center;gap:5px}.cube-related span{color:#49d9df;font-size:14px}.cube-related:hover{border-color:#36cad0;background:#16374a}
+.cube-inspector-foot{margin-top:auto;border-top:1px solid #294050;padding-top:12px;color:#7592a8;font-size:10px;line-height:1.55}.cube-note{background:#102435;border-left:2px solid #20aab5;padding:12px;color:#a8c7d7;font-size:11px;line-height:1.6}
+.cube-focus-row{display:flex;gap:7px;flex-wrap:wrap}.cube-focus-btn{cursor:pointer;border:1px solid #2b6271;border-radius:6px;background:#123142;color:#b9f6fa;padding:9px;font-size:10px;font-family:inherit;line-height:1.4}
+.cube-focus-btn:hover{background:#1a4c5e}
+@media(max-width:900px){.cube-layout{grid-template-columns:minmax(0,1fr) 245px}.cube-stage{min-height:525px}.cube-inspector{padding:15px}}
+@media(max-width:650px){.cube-head{padding:15px}.cube-head-meta{display:none}.cube-layout{grid-template-columns:1fr}.cube-stage{height:450px;min-height:450px}.cube-inspector{border-left:0;border-top:1px solid #294050;min-height:250px}.cube-toolbar{top:10px;left:10px;right:10px}.cube-chip{padding:7px;font-size:10px}.cube-hint{font-size:9px;padding:7px 9px}.cube-control{padding:7px 10px}.cube-inspector h2{font-size:20px}}
+@media(prefers-reduced-motion:reduce){.cube-canvas{scroll-behavior:auto}}

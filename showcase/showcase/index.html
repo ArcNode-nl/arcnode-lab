@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#070c13" />
+  <title>ArcNode — Showcase v0.12</title>
+  <link rel="icon" href="assets/arcnode-logo.png" type="image/png" />
+  <link rel="stylesheet" href="assets/app.css?v=12" />
+  <link rel="stylesheet" href="assets/news.css?v=12" />
+  <script defer src="assets/news.js?v=12-hetzner-1"></script>
+  <link rel="stylesheet" href="assets/cube.css?v=12" />
+  <script defer src="assets/cube.js?v=12"></script>
+  <script defer src="assets/app.js?v=12"></script>
+</head>
+<body>
+  <div class="app-root">
+    <header class="site-header">
+      <button id="brand-home" class="brand-mark" type="button" aria-label="Ga naar ArcNode overzicht">
+        <img src="assets/arcnode-logo.png" alt="Origineel ArcNode beeldmerk" width="50" height="50" />
+        <span class="brand-wordmark">ARCNODE<span class="brand-period">.</span><small>FROM NOISE TO SIGNAL</small></span>
+      </button>
+      <div class="header-right"><span class="header-label">INTERACTIVE SHOWCASE</span><span id="version-label" class="version-label">V0.12</span></div>
+    </header>
+    <main>
+      <section id="home-view" class="view" aria-label="ArcNode hoofdscherm">
+        <div class="home-heading">
+          <div><div class="overline">ARCNODE / SELECTED WORK</div><h1>Vier toepassingen.<br /><span>Eén manier van denken.</span></h1>
+          <p>Van onoverzichtelijke informatie naar werkende oplossingen. Ontdek hoe ArcNode data, processen en kennis bruikbaar maakt.</p></div>
+          <div class="home-counter"><strong>04</strong><span>CASES</span></div>
+        </div>
+        <div class="case-grid">
+          <button type="button" class="case-card case-cube" data-case="cube">
+            <div class="card-illustration cube-ill">
+              <svg viewBox="0 0 600 245" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                <defs><radialGradient id="cube-glow"><stop stop-color="#154964"/><stop offset="1" stop-color="#07111d"/></radialGradient></defs>
+                <rect width="600" height="245" fill="url(#cube-glow)"/>
+                <g transform="translate(0,-1)">
+                  <polygon points="300,21 399,76 300,133 201,76" fill="#1b99b5" fill-opacity=".14" stroke="#4ad8e9" stroke-width="2"/>
+                  <polygon points="201,76 300,133 300,232 201,175" fill="#14779e" fill-opacity=".12" stroke="#35b9d4" stroke-width="2"/>
+                  <polygon points="399,76 300,133 300,232 399,175" fill="#24d0d7" fill-opacity=".12" stroke="#6af4ef" stroke-width="2"/>
+                  <path d="M300 21V133M201 175L300 133 399 175M300 232V133" stroke="#9cfbfa" stroke-width="1.5" stroke-dasharray="5 7" opacity=".32" fill="none"/>
+                  <path d="M251 103L335 103 358 148 293 171 251 103M293 171L325 193" fill="none" stroke="#53d9e3" stroke-opacity=".55" stroke-width="1.3"/>
+                  <g fill="#79f4f6"><circle cx="251" cy="103" r="5"/><circle cx="335" cy="103" r="7"/><circle cx="358" cy="148" r="4"/><circle cx="293" cy="171" r="6"/><circle cx="325" cy="193" r="3"/></g>
+                  <circle cx="300" cy="133" r="11" fill="#112e40" stroke="#abffff" stroke-width="2"/>
+                </g>
+              </svg>
+              <span class="vis-caption">3D KNOWLEDGE CUBE / PREVIEW</span>
+            </div>
+            <div class="card-information"><div><small>01 / KENNIS</small><h2>Knowledge Cube</h2><p>Relaties zichtbaar maken in complexe kennis</p></div><span class="card-go">↗</span></div>
+          </button>
+          <button type="button" class="case-card case-production" data-case="production">
+            <div class="card-illustration production-ill"><div class="mini-workstation"><div class="mini-head"><span class="mini-dot"></span><span>WERKORDER / 041</span><span class="mini-status">IN PRODUCTIE</span></div><div class="mini-row"><span>Lasersnijden</span><b>Gereed</b></div><div class="mini-bar"><i style="width:100%"></i></div><div class="mini-row"><span>Kanten</span><b>60%</b></div><div class="mini-bar"><i style="width:60%"></i></div><div class="mini-row"><span>Kwaliteitscontrole</span><b>Gepland</b></div><div class="mini-bar"><i style="width:0%"></i></div></div><span class="vis-caption">PRODUCTION OPERATIONS / LIVE DEMO</span></div>
+            <div class="card-information"><div><small>02 / PRODUCTIE</small><h2>Productieflow</h2><p>Van offerte tot werkelijke marge</p></div><span class="card-go">↗</span></div>
+          </button>
+          <button type="button" class="case-card case-news" data-case="news">
+            <div class="card-illustration news-ill"><div class="news-pulse"><div class="news-item"><i></i><div><b>Nieuwe productielijn</b><small>Capaciteitsuitbreiding gedetecteerd</small></div><strong>96%</strong></div><div class="news-item"><i></i><div><b>Marktontwikkeling</b><small>Maakindustrie</small></div><strong>87%</strong></div><div class="news-item"><i></i><div><b>Signaal voor inkoop</b><small>Verandering levertijden</small></div><strong>91%</strong></div></div><span class="vis-caption">SIGNAL DETECTION / INTELLIGENCE</span></div>
+            <div class="card-information"><div><small>03 / INTELLIGENCE</small><h2>Nieuws-AI</h2><p>Van nieuwsbronnen naar relevante signalen</p></div><span class="card-go">↗</span></div>
+          </button>
+          <button type="button" class="case-card case-cocanvas" data-case="cocanvas">
+            <div class="card-illustration cocanvas-ill"><div class="schematic"><svg viewBox="0 0 560 245" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><rect x="82" y="20" width="396" height="208" fill="white" stroke="#96b2ce" stroke-width="2"/><g fill="none" stroke="#417eb9" stroke-width="2"><path d="M105 46H454V200H105ZM145 46V200M256 46V200M105 119H454M256 83H454M145 151H256"/></g><g fill="none" stroke="#98b4ca" stroke-width="1" stroke-dasharray="4 4"><path d="M97 36H464M97 210H464M70 48V200M487 48V200"/></g><text x="393" y="65" fill="#4375aa" font-size="11">MODEL</text></svg><span class="video-play">▶</span></div><span class="vis-caption">DESIGN TO MATERIALS / VIDEO</span></div>
+            <div class="card-information"><div><small>04 / ENGINEERING</small><h2>CoCanvas</h2><p>Van technische tekening naar materiaallijst</p></div><span class="card-go">↗</span></div>
+          </button>
+        </div>
+        <footer class="home-footer"><span>ARCNODE / INFRASTRUCTURE FOR INTELLIGENT SYSTEMS</span><span></span></footer>
+      </section>
+      <section id="detail-view" class="view is-hidden" aria-label="Geselecteerde toepassing">
+        <div class="detail-toolbar"><button id="go-home" class="back-button" type="button">← Terug naar overzicht</button><span id="detail-kicker" class="detail-kicker"></span></div>
+        <div class="detail-heading"><div><h1 id="detail-title"></h1><p id="detail-subtitle"></p></div><div class="detail-tag">ARCNODE / DEMO</div></div>
+        <div id="detail-body"></div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
