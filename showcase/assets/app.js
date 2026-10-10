@@ -106,9 +106,20 @@ function renderCube(){
   window.ArcNodeCube.mount(root.querySelector('#cube-mount'));
 }
 function renderCocanvas(){
- const video='assets/cocanvas.mp4';
- $('#detail-body').innerHTML=`<div class="video-area"><div><h2>CoCanvas</h2><p>De video-opname volgt als derde onderdeel van de voorbereiding. Zodra het bestand <strong>assets/cocanvas.mp4</strong> aanwezig is, wordt hier de echte demonstratie afgespeeld.</p></div></div>`;
- fetch(video,{method:'HEAD'}).then(r=>{if(r.ok&&activeCase==='cocanvas')$('#detail-body').innerHTML=`<div class="video-area"><video controls playsinline preload="metadata" src="${video}"></video></div>`;}).catch(()=>{});
+ const video='assets/demo_film3_downloadlijst_wit.webm';
+ $('#detail-body').innerHTML=`
+   <div class="video-area cocanvas-video-area">
+     <video autoplay muted loop playsinline preload="auto" aria-label="Demonstratie CoCanvas: van technische tekening naar materiaallijst">
+       <source src="${video}" type="video/webm" />
+       Je browser ondersteunt deze video niet.
+     </video>
+   </div>
+   <section class="cocanvas-context" aria-label="HTM-innovatiechallenge">
+     <h2>CoCanvas: van materiaalanalyse naar slimme tekeningencontrole</h2>
+     <p>HTM, het openbaarvervoerbedrijf in de regio Den Haag, zoekt een innovatieve oplossing voor een tijdrovend probleem. Bij de aanleg en het onderhoud van tram- en businfrastructuur moeten technische tekeningen onderling én met de bijbehorende werkbeschrijvingen (bestekken) overeenkomen. Die controles gebeuren nu grotendeels handmatig.</p>
+     <p>Via het innovatieprogramma OV Connect daagt HTM technologiebedrijven uit om deze controles te automatiseren. De challenge biedt uitzicht op een betaalde pilot van €25.000.</p>
+     <p><strong>ArcNode werkt aan een inzending op basis van de technologie achter CoCanvas.</strong> Waar CoCanvas technische tekeningen vertaalt naar bruikbare materiaalinformatie, onderzoeken we nu hoe dezelfde technologie verschillen, fouten en ontbrekende onderdelen in complexe infrastructuurprojecten kan herkennen en visualiseren.</p>
+   </section>`;
 }
 const descriptions={
  cube:['Knowledge Cube','KENNISVISUALISATIE','Kennis, relaties en herkomst inzichtelijk maken.','01 / KENNIS'],

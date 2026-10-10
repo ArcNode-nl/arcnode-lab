@@ -3,3 +3,13 @@
 @media(max-width:600px){.site-header{min-height:75px}.brand-mark img{width:42px;height:42px}.brand-wordmark{font-size:16px;letter-spacing:2px}.brand-wordmark small{font-size:7px}.header-label{display:none}.home-heading h1{font-size:31px}.case-grid{gap:10px}.card-illustration{height:135px}.card-information{padding:12px}.card-information h2{font-size:17px}.card-information p{font-size:11px}.card-information small{font-size:8px;letter-spacing:1px}.card-go{display:none}.home-footer{display:block;font-size:9px;line-height:1.8}.detail-tag{display:none}.step{justify-content:center;flex-direction:column;text-align:center;gap:5px!important;padding:10px 4px!important;font-size:10px!important}.production-top{padding:13px}.production-top small{display:none}.work-title{flex-direction:column}.form-grid,.actual-grid{grid-template-columns:1fr}.kpi-grid,.margin-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi strong,.margin-box strong{font-size:18px}.story-grid{grid-template-columns:1fr}.breakdown{font-size:11px}.breakdown th,.breakdown td{padding:10px 5px}.product-footer{display:block}}
 @media(prefers-reduced-motion:reduce){.case-card,.connections,.glow-nodes circle,.news-item{animation:none!important;transition:none!important}}
 @media(max-width:600px){.detail-toolbar{align-items:flex-start;flex-direction:column;gap:11px}.step{overflow-wrap:anywhere;min-width:0;font-size:9px!important}.product-footer span{display:block;margin-top:5px}}
+
+/* CoCanvas: grote, automatisch herhalende video met HTM-context eronder. */
+.cocanvas-video-area{min-height:0;display:block;padding:12px;text-align:left}
+.cocanvas-video-area video{display:block;width:100%;max-height:650px;height:auto;object-fit:contain;border-radius:8px;background:#fff}
+.cocanvas-context{margin-top:18px;padding:24px 28px;border:1px solid #2d4657;border-radius:14px;background:#111e2e;color:#e9f3fc}
+.cocanvas-context h2{font-size:21px;line-height:1.3;margin:0 0 15px}
+.cocanvas-context p{color:#b7c9d8;font-size:14px;line-height:1.65;margin:0 0 13px;max-width:100ch}
+.cocanvas-context p:last-child{margin-bottom:0}
+.cocanvas-context strong{color:#f3f9fd}
+@media(max-width:850px){.cocanvas-video-area{padding:7px}.cocanvas-context{padding:17px 19px}.cocanvas-context h2{font-size:18px}.cocanvas-context p{font-size:13px}}
