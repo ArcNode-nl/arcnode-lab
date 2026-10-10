@@ -1,0 +1,3 @@
+# In de PUBLISH-root van de bestaande Netlify-site; boven eventuele catch-all-regels.
+/showcase/api/preview/*  https://api.arcnode.nl/showcase-api/api/preview/:splat  200
+/showcase/api/image/*    https://api.arcnode.nl/showcase-api/api/image/:splat    200
