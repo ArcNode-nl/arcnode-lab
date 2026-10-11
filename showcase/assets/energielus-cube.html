@@ -1,0 +1,2328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ArcNode · Energielus Knowledge Cube</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#040914; --bg2:#081427; --panel:rgba(7,15,31,.78); --line:rgba(120,170,230,.14); --line2:rgba(120,170,230,.26);
+  --ink:#dbe6f5; --ink2:#9fb2cc; --ink3:#647892;
+  --cyan:#4fd1e6; --blue:#5a8cff; --green:#6ee7a8; --warm:#ffb25c;
+  --sans:"Archivo","Helvetica Neue",Arial,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark; box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#040914; } }
+:root[data-theme="dark"]{ --bg:#040914; }
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;height:100%;overflow:hidden;font-family:var(--sans);color:var(--ink);font-size:12.5px;line-height:1.45;
+  background:radial-gradient(ellipse at 62% 42%, #0b1c36 0%, #071224 38%, var(--bg) 75%);}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block}
+button{font-family:inherit;color:inherit}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:1px solid var(--cyan);outline-offset:2px}
+
+/* overlays */
+#labels,#edgeLabels,#faceLabels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.lbl{position:absolute;left:0;top:0;white-space:nowrap;font-size:10.5px;letter-spacing:.01em;color:var(--ink2);
+  transform-origin:0 0;will-change:transform,opacity;text-shadow:0 0 6px #040914,0 0 2px #040914}
+.lbl.sol{font-size:12px;font-weight:600;color:#e8dcc0;font-stretch:88%;letter-spacing:.04em}
+.lbl.sol.active{color:var(--warm)}
+.lbl.focus{color:var(--ink)}
+.flbl{position:absolute;left:0;top:0;font-family:var(--sans);font-stretch:75%;font-weight:600;font-size:11px;letter-spacing:.22em;
+  opacity:.38;white-space:nowrap;transition:opacity .3s}
+.flbl.on{opacity:.95}
+.elbl{position:absolute;left:0;top:0;font-family:var(--mono);font-size:9px;color:#a9d8e8;background:rgba(4,10,22,.78);
+  border:1px solid rgba(79,209,230,.22);padding:1px 4px;border-radius:2px;white-space:nowrap}
+
+/* panels */
+.panel{position:fixed;background:var(--panel);border:1px solid var(--line);border-radius:6px;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#left{top:calc(14px + env(safe-area-inset-top,0px));left:14px;width:min(286px,86vw);max-height:calc(100% - 128px);overflow:auto;padding:16px 16px 14px}
+#right{top:calc(14px + env(safe-area-inset-top,0px));right:14px;width:min(392px,92vw);max-height:calc(100% - 128px);overflow:auto;padding:16px;
+  transform:translateX(calc(100% + 30px));transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+#right.open{transform:none}
+.panel::-webkit-scrollbar{width:6px}.panel::-webkit-scrollbar-thumb{background:rgba(120,170,230,.18);border-radius:3px}
+
+h1{margin:0;font-stretch:78%;font-weight:650;font-size:21px;letter-spacing:.09em;line-height:1.05;color:#eaf2ff}
+.subtitle{margin:6px 0 10px;color:var(--cyan);font-size:12.5px;font-weight:400}
+.intro{color:var(--ink2);margin:0 0 14px;font-size:12px}
+.grp{border-top:1px solid var(--line);padding-top:11px;margin-top:11px}
+.grp-h{font-size:11px;color:var(--ink3);margin-bottom:7px;display:flex;justify-content:space-between}
+.solbtn{display:flex;width:100%;align-items:center;gap:9px;background:transparent;border:1px solid var(--line);border-radius:4px;
+  padding:7px 9px;margin-bottom:5px;cursor:pointer;text-align:left;transition:border-color .2s,background .2s}
+.solbtn:hover{border-color:var(--line2);background:rgba(120,170,230,.05)}
+.solbtn.active{border-color:rgba(255,178,92,.55);background:rgba(255,178,92,.07)}
+.solbtn .dia{color:#e8dcc0;font-size:12px}.solbtn.active .dia{color:var(--warm)}
+.solbtn .nm{flex:1;font-weight:550;font-size:12.5px}
+.solbtn .ct{font-family:var(--mono);font-size:10px;color:var(--ink3)}
+.viewbtn{display:block;width:100%;text-align:left;background:rgba(79,209,230,.04);border:1px solid rgba(79,209,230,.18);border-radius:4px;
+  padding:7px 9px;margin-bottom:5px;cursor:pointer;font-size:12px;letter-spacing:.06em;font-stretch:85%;font-weight:600;color:#bfeef7;transition:all .2s}
+.viewbtn small{display:block;letter-spacing:0;font-stretch:100%;font-weight:400;color:var(--ink3);font-size:10.5px;margin-top:1px}
+.viewbtn:hover{border-color:rgba(79,209,230,.45)}
+.viewbtn.active{background:rgba(79,209,230,.14);border-color:var(--cyan);color:#fff}
+.dom{display:flex;align-items:center;gap:8px;padding:3px 0;cursor:pointer;user-select:none;font-size:11.5px}
+.dom input{appearance:none;width:11px;height:11px;border:1px solid var(--line2);border-radius:2px;margin:0;display:grid;place-items:center;cursor:pointer}
+.dom input:checked{background:currentColor;border-color:currentColor}
+.dom .n{flex:1;font-stretch:80%;letter-spacing:.14em;font-weight:600;font-size:10.5px}
+.dom .c{font-family:var(--mono);font-size:10px;color:var(--ink3)}
+.toggles{display:flex;flex-wrap:wrap;gap:5px}
+.tgl{background:transparent;border:1px solid var(--line);border-radius:3px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--ink2)}
+.tgl.on{border-color:var(--line2);color:var(--ink);background:rgba(120,170,230,.08)}
+.tgl.reset{border-color:rgba(255,178,92,.3);color:#f2c994}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;font-size:10.5px;color:var(--ink2)}
+.legend span b{display:inline-block;width:13px;font-weight:400;text-align:center;margin-right:4px}
+.stat{font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:10px}
+.io{display:flex;gap:5px;margin-top:8px}
+
+/* right panel content */
+.p-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.badge{font-size:10.5px;color:var(--ink2);border:1px solid var(--line2);border-radius:3px;padding:2px 7px;display:inline-flex;gap:5px;align-items:center}
+.x{background:none;border:none;color:var(--ink3);font-size:18px;line-height:1;cursor:pointer;padding:2px 4px}
+.x:hover{color:var(--ink)}
+#right h2{margin:0 0 6px;font-size:18px;font-weight:600;font-stretch:88%;letter-spacing:.01em;color:#f0f5ff}
+#right h2.sol{color:var(--warm)}
+.desc{color:var(--ink2);margin:0 0 12px}
+.back{background:none;border:none;color:var(--cyan);cursor:pointer;padding:0;font-size:11.5px;margin-bottom:8px}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:6px 10px;font-size:11.5px;margin-bottom:12px}
+.kv dt{color:var(--ink3)}.kv dd{margin:0}
+.chip{display:inline-block;font-size:9.5px;letter-spacing:.14em;font-stretch:80%;font-weight:600;border:1px solid currentColor;border-radius:2px;padding:1px 5px;margin:0 4px 3px 0;opacity:.9}
+.solchip{display:inline-flex;align-items:center;gap:5px;background:none;border:1px solid rgba(232,220,192,.3);color:#e8dcc0;border-radius:3px;padding:2px 7px;margin:0 4px 4px 0;font-size:11px;cursor:pointer}
+.solchip.active{border-color:var(--warm);color:var(--warm)}
+.reuse{font-size:11px;color:#e8dcc0;margin-top:2px}
+.sec-t{font-size:11px;color:var(--ink3);margin:14px 0 6px;display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:4px}
+.rel{display:flex;align-items:baseline;gap:6px;padding:3px 0;font-size:11.5px;flex-wrap:wrap}
+.rt{font-family:var(--mono);font-size:9.5px;color:#9fd8e6;background:rgba(79,209,230,.07);border-radius:2px;padding:0 4px}
+.rt.in{color:#b3c4e0;background:rgba(120,170,230,.07)}
+.nl{background:none;border:none;padding:0;cursor:pointer;color:var(--ink);font-size:11.5px;text-align:left;border-bottom:1px dotted rgba(159,178,204,.35)}
+.nl:hover{color:#fff;border-bottom-color:var(--cyan)}
+.nt{color:var(--ink3);font-size:10.5px}
+.meta{font-family:var(--mono);font-size:10px;color:var(--ink3);display:grid;grid-template-columns:62px 1fr;gap:2px 8px}
+.bars{display:grid;grid-template-columns:128px 1fr 22px;gap:3px 8px;align-items:center;font-size:11px}
+.bar{height:4px;background:rgba(120,170,230,.12);border-radius:2px;overflow:hidden}.bar i{display:block;height:100%;background:var(--cyan);opacity:.7}
+.bars .v{font-family:var(--mono);font-size:10px;color:var(--ink3);text-align:right}
+.big{font-size:26px;font-weight:300;font-stretch:80%;color:#f0f5ff;line-height:1}
+.big small{font-size:11px;color:var(--ink3);font-weight:400;margin-left:6px;font-stretch:100%}
+.note{border-left:2px solid var(--warm);padding:7px 10px;background:rgba(255,178,92,.05);color:#e5d6bd;font-size:11.5px;margin:10px 0 12px}
+.doc-sec{border:1px solid var(--line);border-radius:4px;padding:8px 10px;margin-bottom:7px;transition:border-color .2s,background .2s}
+.doc-sec:hover{border-color:rgba(79,209,230,.35);background:rgba(79,209,230,.03)}
+.doc-h{display:flex;align-items:baseline;gap:8px}
+.doc-h .num{font-family:var(--mono);font-size:10px;color:var(--cyan)}
+.doc-h .ti{flex:1;font-weight:600;font-size:12.5px}
+.doc-h .ct{font-family:var(--mono);font-size:10px;color:var(--ink3)}
+.q{font-family:var(--mono);font-size:9.5px;color:var(--ink3);margin:2px 0 6px}
+.ref{display:block;padding:2px 0}
+.ref .ic{display:inline-block;width:14px;text-align:center;font-size:10px}
+.ref .hint{display:block;margin-left:18px;font-size:10.5px;color:var(--ink3)}
+.empty{font-size:11px;color:var(--ink3);font-style:italic}
+details.payload{margin-top:12px;border:1px solid var(--line);border-radius:4px}
+details.payload summary{cursor:pointer;padding:7px 10px;font-size:11.5px;color:var(--ink2)}
+details.payload pre{margin:0;padding:8px 10px;max-height:260px;overflow:auto;font-family:var(--mono);font-size:9.5px;color:#9fc3d6;border-top:1px solid var(--line);white-space:pre}
+.ai{font-size:11px;color:var(--ink2);margin-top:10px}
+
+/* pipeline */
+#pipeline{position:fixed;left:50%;bottom:calc(40px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;align-items:center;gap:0;
+  padding:7px 10px;border-radius:5px}
+.stg{font-size:10.5px;color:var(--ink3);padding:4px 9px;border:1px solid transparent;border-radius:3px;white-space:nowrap;transition:all .3s}
+.stg.on{color:var(--ink);border-color:var(--line2);background:rgba(120,170,230,.07)}
+.stg.warm.on{border-color:rgba(255,178,92,.5);color:#ffd6a3}
+.stg.fut{border:1px dashed rgba(120,170,230,.22);color:var(--ink3)}
+.stg.fut.on{border-color:rgba(79,209,230,.5);color:#bfeef7}
+.arr{color:var(--ink3);font-size:11px;padding:0 5px}
+#disclaimer{position:fixed;left:0;right:0;bottom:calc(10px + env(safe-area-inset-bottom,0px));text-align:center;font-size:10.5px;color:#8596ad;pointer-events:none;padding:0 14px}
+#disclaimer b{color:#c9b58f;font-weight:500}
+
+#tip{position:fixed;left:0;top:0;pointer-events:none;background:rgba(5,12,26,.92);border:1px solid var(--line2);border-radius:4px;
+  padding:7px 9px;max-width:270px;font-size:11.5px;opacity:0;transition:opacity .12s}
+#tip .tt{font-size:10px;color:var(--ink3)}
+#tip .tn{font-weight:600;margin:1px 0 3px;font-size:12.5px}
+#tip .td{color:var(--ink2);margin-top:4px}
+#hint{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);font-size:11px;color:var(--ink3);pointer-events:none;text-align:center}
+#err{position:fixed;inset:0;display:none;place-items:center;color:var(--ink2);text-align:center;padding:30px}
+@media (max-width:900px){#pipeline{display:none}#hint{display:none}#left{max-height:40%}}
+@media (prefers-reduced-motion:reduce){#right{transition:none}}
+</style>
+
+<style>
+/* Alleen presentatie in de ArcNode tabletshowcase. Het oorspronkelijke Cube-model,
+   de Three.js-engine, semantische layout, navigatie en constellaties blijven intact. */
+#left { top:9px; left:9px; width:min(238px,32vw); max-height:calc(100% - 18px); padding:11px 12px; }
+#left h1,#left .subtitle,#left .intro { display:none; }
+#right { top:9px; right:9px; width:min(320px,39vw); max-height:calc(100% - 18px); }
+#pipeline,#hint,#disclaimer { display:none; }
+.elbl { background:transparent; border:0; padding:0; text-shadow:0 0 8px #040914,0 0 2px #040914; }
+@media(max-width:850px) { #left {width:min(210px,38vw); max-height:65%;} #right {width:min(330px,70vw);max-height:80%;} }
+@media(max-width:540px) { #left {width:min(165px,43vw); max-height:40%;} #left .grp {margin-top:6px;padding-top:7px;} #left .grp:nth-of-type(n+3){display:none} #right {width:76vw;} }
+@media(pointer:coarse){#tip{display:none}}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="faceLabels"></div>
+<div id="edgeLabels"></div>
+<div id="labels"></div>
+
+<aside id="left" class="panel">
+  <h1>SOLUTION<br>KNOWLEDGE CUBE</h1>
+  <div class="subtitle">Zes bedrijfsdimensies in één kennismodel.</div>
+  <p class="intro">Een fictief energiebedrijf. Verken de relaties tussen bedrijfsvoering, verkoop, producten, operatie, data en software.</p>
+  <div class="grp"><div class="grp-h"><span>Business solutions</span><span>objects</span></div><div id="solList"></div></div>
+  <div class="grp"><div class="grp-h"><span>Document views</span><span id="viewFor"></span></div><div id="viewList"></div></div>
+  <div class="grp"><div class="grp-h"><span>Domains</span><span>objects</span></div><div id="domList"></div></div>
+  <div class="grp"><div class="grp-h"><span>Display</span></div>
+    <div class="toggles">
+      <button class="tgl" id="tReuse" title="Highlight objects used by more than one solution">Show reuse</button>
+      <button class="tgl" id="tLabels">Labels: focus</button>
+      <button class="tgl" id="tRotate">Auto-rotate</button>
+      <button class="tgl reset" id="tReset">Reset</button>
+    </div>
+  </div>
+  <div class="grp"><div class="grp-h"><span>Object types</span></div><div class="legend" id="legend"></div>
+    <div class="legend" style="margin-top:6px;grid-template-columns:1fr"><span><b style="color:#e8dcc0">◌</b>Shared by more than one solution</span></div>
+  </div>
+  <div class="grp"><div class="grp-h"><span>Graph data</span></div>
+    <div class="io"><button class="tgl" id="bExport">Export JSON</button><button class="tgl" id="bImport">Import JSON</button><input type="file" id="fImport" accept="application/json,.json" hidden></div>
+    <div class="stat" id="stat"></div>
+  </div>
+</aside>
+
+<aside id="right" class="panel" aria-live="polite"></aside>
+
+<div id="pipeline" class="panel">
+  <span class="stg on" id="s1">Knowledge objects + relationships</span><span class="arr">›</span>
+  <span class="stg warm" id="s2">Solution constellation</span><span class="arr">›</span>
+  <span class="stg" id="s3">Document view (query)</span><span class="arr">›</span>
+  <span class="stg fut" id="s4">AI narrative · future</span><span class="arr">›</span>
+  <span class="stg fut" id="s5">Human review · future</span>
+</div>
+<div id="hint">Drag to orbit · scroll to zoom · right-drag to pan · click a star to inspect</div>
+<div id="disclaimer"><b>Alle getoonde kennisobjecten en relaties zijn fictief.</b> Dit is een demonstratie, geen beschrijving van een bestaand bedrijf.</div>
+<div id="tip"></div>
+<div id="err"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+/* =====================================================================
+   1. GRAPH DATA  — synthetic, replaceable by imported JSON.
+   No rendering concerns in here. Documents are NOT nodes: they are
+   queries in `views` over a solution's constellation.
+   ===================================================================== */
+const graphData = {
+  "meta": {
+    "title": "Energielus — zes bedrijfsdimensies",
+    "version": "ArcNode-showcase",
+    "primarySolution": "ems",
+    "solutionType": "BusinessSolution",
+    "contextTypes": [
+      "Organization",
+      "BusinessValue",
+      "SalesObject"
+    ],
+    "nonExpandingRelations": [],
+    "nodeTypes": {
+      "Organization": "Organisatie",
+      "BusinessSolution": "Oplossing",
+      "BusinessValue": "Bedrijfswaarde",
+      "SalesObject": "Commercieel object",
+      "Product": "Product of dienst",
+      "DeliveryActivity": "Uitvoering",
+      "DataConcept": "Dataconcept",
+      "Capability": "Softwarefunctie",
+      "Integration": "API / Integratie",
+      "Infrastructure": "Softwareplatform"
+    },
+    "disclaimer": "Alle getoonde organisaties, systemen, relaties en gegevens zijn fictief en dienen uitsluitend als demonstratie."
+  },
+  "domains": [
+    {
+      "id": "BUSINESS",
+      "label": "Business",
+      "description": "Bedrijfsmodel, partners en doelen"
+    },
+    {
+      "id": "SALES",
+      "label": "Sales",
+      "description": "Klanten, offertes, contracten en CRM"
+    },
+    {
+      "id": "PRODUCT",
+      "label": "Producten",
+      "description": "Slimme energieproducten en diensten"
+    },
+    {
+      "id": "OPERATIONS",
+      "label": "Operations",
+      "description": "Installatie, planning en service"
+    },
+    {
+      "id": "DATA",
+      "label": "Data",
+      "description": "Meetwaarden, prijzen en voorkeuren"
+    },
+    {
+      "id": "DEVELOPMENT",
+      "label": "Development",
+      "description": "API’s, software, monitoring en regels"
+    }
+  ],
+  "relationshipTypes": [
+    {
+      "id": "APPLIES_TO",
+      "description": "applies to"
+    },
+    {
+      "id": "CONSTRAINS",
+      "description": "constrains"
+    },
+    {
+      "id": "CONSUMES",
+      "description": "consumes"
+    },
+    {
+      "id": "CONTRACTS_WITH",
+      "description": "contracts with"
+    },
+    {
+      "id": "CONTROLS",
+      "description": "controls"
+    },
+    {
+      "id": "DELIVERED_BY",
+      "description": "delivered by"
+    },
+    {
+      "id": "DELIVERS_VALUE",
+      "description": "delivers value"
+    },
+    {
+      "id": "DEPENDS_ON",
+      "description": "depends on"
+    },
+    {
+      "id": "ENABLES",
+      "description": "enables"
+    },
+    {
+      "id": "INCLUDES",
+      "description": "includes"
+    },
+    {
+      "id": "INTEGRATES_WITH",
+      "description": "integrates with"
+    },
+    {
+      "id": "MANAGES",
+      "description": "manages"
+    },
+    {
+      "id": "MONITORS",
+      "description": "monitors"
+    },
+    {
+      "id": "OFFERS",
+      "description": "offers"
+    },
+    {
+      "id": "PARTNERS_WITH",
+      "description": "partners with"
+    },
+    {
+      "id": "PART_OF",
+      "description": "part of"
+    },
+    {
+      "id": "PRODUCES",
+      "description": "produces"
+    },
+    {
+      "id": "RECORDED_AS",
+      "description": "recorded as"
+    },
+    {
+      "id": "REPRESENTS",
+      "description": "represents"
+    },
+    {
+      "id": "REQUIRES",
+      "description": "requires"
+    },
+    {
+      "id": "SCHEDULES",
+      "description": "schedules"
+    },
+    {
+      "id": "SERVES",
+      "description": "serves"
+    },
+    {
+      "id": "SOURCED_FROM",
+      "description": "sourced from"
+    },
+    {
+      "id": "SUPPORTED_BY",
+      "description": "supported by"
+    },
+    {
+      "id": "USES",
+      "description": "uses"
+    },
+    {
+      "id": "VALIDATED_BY",
+      "description": "validated by"
+    },
+    {
+      "id": "VALIDATES",
+      "description": "validates"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "energy",
+      "label": "Energielus",
+      "type": "Organization",
+      "domains": [
+        "BUSINESS"
+      ],
+      "description": "Fictieve aanbieder van slimme energieoplossingen voor woningen. Verbindt klant, partners en digitale diensten.",
+      "status": "Illustratief",
+      "source": "Fictief bedrijfsprofiel"
+    },
+    {
+      "id": "manufacturer",
+      "label": "Batterijfabrikant",
+      "type": "Organization",
+      "domains": [
+        "BUSINESS"
+      ],
+      "description": "Externe leverancier van batterijhardware, firmware en technische productdocumentatie.",
+      "status": "Illustratief",
+      "source": "Fictieve leveranciersafspraak"
+    },
+    {
+      "id": "installer_partner",
+      "label": "Installatiepartner",
+      "type": "Organization",
+      "domains": [
+        "BUSINESS"
+      ],
+      "description": "Regionale partij die apparaten plaatst en veilig in bedrijf stelt bij klanten.",
+      "status": "Illustratief",
+      "source": "Fictief partnercontract"
+    },
+    {
+      "id": "utility",
+      "label": "Energieleverancier",
+      "type": "Organization",
+      "domains": [
+        "BUSINESS"
+      ],
+      "description": "Partner voor dynamische elektriciteitscontracten en de commerciële afhandeling ervan.",
+      "status": "Illustratief",
+      "source": "Fictief energiepartnercontract"
+    },
+    {
+      "id": "promise",
+      "label": "Servicebelofte",
+      "type": "BusinessValue",
+      "domains": [
+        "BUSINESS"
+      ],
+      "description": "Klanten krijgen inzicht in hun energieverbruik en ondersteuning bij storingen.",
+      "status": "Illustratief",
+      "source": "Fictieve klantpropositie"
+    },
+    {
+      "id": "revenue",
+      "label": "Verdienmodel",
+      "type": "BusinessValue",
+      "domains": [
+        "BUSINESS"
+      ],
+      "description": "Marge op apparatuur, installatie en optionele doorlopende dienstverlening.",
+      "status": "Illustratief",
+      "source": "Fictieve businesscase"
+    },
+    {
+      "id": "saving",
+      "label": "Klantbesparing",
+      "type": "BusinessValue",
+      "domains": [
+        "BUSINESS",
+        "DATA"
+      ],
+      "description": "Beoogde kostenoptimalisatie op basis van verbruik, marktprijzen en beschikbare apparaten; uitkomst is situatieafhankelijk.",
+      "status": "Illustratief",
+      "source": "Fictieve waardecase"
+    },
+    {
+      "id": "customer",
+      "label": "Huishouden",
+      "type": "SalesObject",
+      "domains": [
+        "SALES"
+      ],
+      "description": "Klant met een verbruiksprofiel, wooninstallatie en individuele energiebehoefte.",
+      "status": "Illustratief",
+      "source": "Fictief CRM-profiel"
+    },
+    {
+      "id": "lead",
+      "label": "Nieuwe lead",
+      "type": "SalesObject",
+      "domains": [
+        "SALES"
+      ],
+      "description": "Aanvraag van iemand die wil weten of een thuisbatterij of laadpunt geschikt is.",
+      "status": "Illustratief",
+      "source": "Fictieve websiteaanvraag"
+    },
+    {
+      "id": "advice",
+      "label": "Energieadvies",
+      "type": "SalesObject",
+      "domains": [
+        "SALES"
+      ],
+      "description": "Advies op basis van verbruik, zonnepanelen, laadbehoefte en investeringsdoelen.",
+      "status": "Illustratief",
+      "source": "Fictief adviesrapport"
+    },
+    {
+      "id": "offer",
+      "label": "Offerte",
+      "type": "SalesObject",
+      "domains": [
+        "SALES",
+        "BUSINESS"
+      ],
+      "description": "Voorstel met producten, installatie, prijs en aannames over de situatie van de klant.",
+      "status": "Illustratief",
+      "source": "Fictieve verkoopofferte"
+    },
+    {
+      "id": "contract",
+      "label": "Klantcontract",
+      "type": "SalesObject",
+      "domains": [
+        "SALES"
+      ],
+      "description": "Vastgelegde afspraken over levering, dienstverlening, rechten en verplichtingen.",
+      "status": "Illustratief",
+      "source": "Fictieve overeenkomst"
+    },
+    {
+      "id": "crm",
+      "label": "CRM-dossier",
+      "type": "SalesObject",
+      "domains": [
+        "SALES",
+        "DATA"
+      ],
+      "description": "Commerciële bron voor leads, klantcontact, offertes, contractstatus en vervolgacties.",
+      "status": "Illustratief",
+      "source": "Fictief CRM-systeem"
+    },
+    {
+      "id": "battery",
+      "label": "Thuisbatterij",
+      "type": "Product",
+      "domains": [
+        "PRODUCT"
+      ],
+      "description": "Slaat elektriciteit tijdelijk op en kan laden of ontladen binnen de afgesproken instellingen.",
+      "status": "Illustratief",
+      "source": "Fictief productblad"
+    },
+    {
+      "id": "solar",
+      "label": "Zonnepanelen",
+      "type": "Product",
+      "domains": [
+        "PRODUCT"
+      ],
+      "description": "Zetten zonlicht om in elektriciteit; opbrengst varieert met licht en installatie.",
+      "status": "Illustratief",
+      "source": "Fictieve productspecificatie"
+    },
+    {
+      "id": "charger",
+      "label": "Slim laadpunt",
+      "type": "Product",
+      "domains": [
+        "PRODUCT"
+      ],
+      "description": "Laadt een elektrische auto en kan het laadvermogen aanpassen op basis van beschikbare informatie.",
+      "status": "Illustratief",
+      "source": "Fictief productblad"
+    },
+    {
+      "id": "dynamic",
+      "label": "Dynamisch tarief",
+      "type": "Product",
+      "domains": [
+        "PRODUCT",
+        "SALES"
+      ],
+      "description": "Contractvorm waarin de elektriciteitsprijs gedurende de tijd varieert.",
+      "status": "Illustratief",
+      "source": "Fictief tariefdocument"
+    },
+    {
+      "id": "app",
+      "label": "Energie-app",
+      "type": "Product",
+      "domains": [
+        "PRODUCT",
+        "DEVELOPMENT"
+      ],
+      "description": "Klantinterface met inzicht in verbruik, opbrengst, status en instellingen.",
+      "status": "Illustratief",
+      "source": "Fictief UX-ontwerp"
+    },
+    {
+      "id": "ems",
+      "label": "Slim energiebeheer",
+      "type": "BusinessSolution",
+      "domains": [
+        "PRODUCT",
+        "DEVELOPMENT"
+      ],
+      "description": "Coördineert het laden en ontladen van batterij en laadpunt volgens ingestelde regels.",
+      "status": "Illustratief",
+      "source": "Fictieve functionele beschrijving"
+    },
+    {
+      "id": "service",
+      "label": "Installatie & service",
+      "type": "BusinessSolution",
+      "domains": [
+        "PRODUCT",
+        "OPERATIONS"
+      ],
+      "description": "Aanvullende service voor monitoring, ondersteuning en periodieke controle.",
+      "status": "Illustratief",
+      "source": "Fictieve dienstverlening"
+    },
+    {
+      "id": "planning",
+      "label": "Installatieplanning",
+      "type": "DeliveryActivity",
+      "domains": [
+        "OPERATIONS"
+      ],
+      "description": "Stemmen van beschikbaarheid van materiaal, monteurs en afspraak met de klant.",
+      "status": "Illustratief",
+      "source": "Fictief planningssysteem"
+    },
+    {
+      "id": "install_order",
+      "label": "Installatieorder",
+      "type": "DeliveryActivity",
+      "domains": [
+        "OPERATIONS"
+      ],
+      "description": "Uitvoerbare opdracht met locatie, geselecteerde producten, planning en instructies.",
+      "status": "Illustratief",
+      "source": "Fictieve werkbon"
+    },
+    {
+      "id": "commission",
+      "label": "Inbedrijfstelling",
+      "type": "DeliveryActivity",
+      "domains": [
+        "OPERATIONS",
+        "DEVELOPMENT"
+      ],
+      "description": "Controle of de installatie is aangesloten, geregistreerd en correct communiceert.",
+      "status": "Illustratief",
+      "source": "Fictief opleverprotocol"
+    },
+    {
+      "id": "ticket",
+      "label": "Serviceticket",
+      "type": "DeliveryActivity",
+      "domains": [
+        "OPERATIONS"
+      ],
+      "description": "Melding met symptomen, status, klantimpact en opvolgactie.",
+      "status": "Illustratief",
+      "source": "Fictieve servicedesk"
+    },
+    {
+      "id": "technician",
+      "label": "Monteur",
+      "type": "DeliveryActivity",
+      "domains": [
+        "OPERATIONS"
+      ],
+      "description": "Voert installatie, inspectie en eventuele reparaties uit.",
+      "status": "Illustratief",
+      "source": "Fictieve rolbeschrijving"
+    },
+    {
+      "id": "diagnosis",
+      "label": "Diagnose op afstand",
+      "type": "DeliveryActivity",
+      "domains": [
+        "OPERATIONS"
+      ],
+      "description": "Analyse van actuele status en foutmeldingen voordat fysieke inzet nodig is.",
+      "status": "Illustratief",
+      "source": "Fictief serviceproces"
+    },
+    {
+      "id": "prices",
+      "label": "Marktprijsreeks",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Tijdgebonden prijsinformatie die de besturing kan gebruiken voor kostenafweging.",
+      "status": "Illustratief",
+      "source": "Fictieve marktdatafeed"
+    },
+    {
+      "id": "meter",
+      "label": "Slimme-meterdata",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Meetwaarden van afname en eventuele teruglevering in de woning.",
+      "status": "Illustratief",
+      "source": "Fictieve meetkoppeling"
+    },
+    {
+      "id": "pvdata",
+      "label": "Zonproductie",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Opbrengstgegevens van de zonnepanelen, gebruikt voor inzicht en prognoses.",
+      "status": "Illustratief",
+      "source": "Fictieve omvormerfeed"
+    },
+    {
+      "id": "soc",
+      "label": "Batterijlading",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Actuele laadstatus en relevante grenzen van de thuisbatterij.",
+      "status": "Illustratief",
+      "source": "Fictief apparaatbericht"
+    },
+    {
+      "id": "sessions",
+      "label": "Laadsessies",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Momenten, vermogen en energiehoeveelheden van elektrisch laden.",
+      "status": "Illustratief",
+      "source": "Fictief laadlogboek"
+    },
+    {
+      "id": "weather",
+      "label": "Weerprognose",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Verwachte zoninstraling en weersinvloeden als input voor energieprognoses.",
+      "status": "Illustratief",
+      "source": "Fictieve externe gegevensbron"
+    },
+    {
+      "id": "prefs",
+      "label": "Klantvoorkeuren",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Toestemming, minimale batterijreserve en voorkeuren voor laden en gebruik.",
+      "status": "Illustratief",
+      "source": "Fictieve app-instellingen"
+    },
+    {
+      "id": "grid",
+      "label": "Netsignalen",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Informatie over netbeperkingen of beschikbaar vermogen, voor zover betrouwbaar en toegankelijk.",
+      "status": "Illustratief",
+      "source": "Fictieve netinformatiebron"
+    },
+    {
+      "id": "optim",
+      "label": "Optimalisatie-engine",
+      "type": "Capability",
+      "domains": [
+        "DEVELOPMENT",
+        "DATA"
+      ],
+      "description": "Berekent een gewenst laad- en ontlaadplan uit prijzen, prognoses en grenzen.",
+      "status": "Illustratief",
+      "source": "Fictief algoritmeontwerp"
+    },
+    {
+      "id": "battery_api",
+      "label": "Batterij-API",
+      "type": "Integration",
+      "domains": [
+        "DEVELOPMENT"
+      ],
+      "description": "Software-interface om batterijstatus uit te lezen en toegestane opdrachten te geven.",
+      "status": "Illustratief",
+      "source": "Fictieve API-specificatie"
+    },
+    {
+      "id": "charger_api",
+      "label": "Laadpunt-API",
+      "type": "Integration",
+      "domains": [
+        "DEVELOPMENT"
+      ],
+      "description": "Software-interface voor laadstatus, sessies en toegestane vermogensaanpassing.",
+      "status": "Illustratief",
+      "source": "Fictieve API-specificatie"
+    },
+    {
+      "id": "pipeline",
+      "label": "Datapijplijn",
+      "type": "Infrastructure",
+      "domains": [
+        "DEVELOPMENT",
+        "DATA"
+      ],
+      "description": "Verzamelt, controleert en verrijkt meetdata voor applicaties en besturing.",
+      "status": "Illustratief",
+      "source": "Fictief technisch ontwerp"
+    },
+    {
+      "id": "portal",
+      "label": "Klantportaal",
+      "type": "Infrastructure",
+      "domains": [
+        "DEVELOPMENT"
+      ],
+      "description": "Softwarelaag achter inzicht, instellingen en gebruikersinteractie in de energie-app.",
+      "status": "Illustratief",
+      "source": "Fictieve applicatiearchitectuur"
+    },
+    {
+      "id": "crm_api",
+      "label": "CRM-koppeling",
+      "type": "Integration",
+      "domains": [
+        "DEVELOPMENT"
+      ],
+      "description": "Synchroniseert relevante klant- en contractgegevens met operationele systemen.",
+      "status": "Illustratief",
+      "source": "Fictief interfacecontract"
+    },
+    {
+      "id": "monitor",
+      "label": "Systeemmonitoring",
+      "type": "Capability",
+      "domains": [
+        "DEVELOPMENT",
+        "OPERATIONS"
+      ],
+      "description": "Signaleert communicatiestoringen en afwijkende apparaatstatus.",
+      "status": "Illustratief",
+      "source": "Fictief monitoringontwerp"
+    },
+    {
+      "id": "rules",
+      "label": "Regelengine",
+      "type": "Capability",
+      "domains": [
+        "DEVELOPMENT"
+      ],
+      "description": "Bewaakt operationele en klantgebonden randvoorwaarden voordat opdrachten worden verstuurd.",
+      "status": "Illustratief",
+      "source": "Fictieve regelset"
+    }
+  ],
+  "edges": [
+    {
+      "from": "energy",
+      "type": "SOURCED_FROM",
+      "label": "koopt hardware bij",
+      "to": "manufacturer"
+    },
+    {
+      "from": "energy",
+      "type": "PARTNERS_WITH",
+      "label": "werkt samen met",
+      "to": "installer_partner"
+    },
+    {
+      "from": "energy",
+      "type": "PARTNERS_WITH",
+      "label": "heeft partnerafspraak met",
+      "to": "utility"
+    },
+    {
+      "from": "energy",
+      "type": "DELIVERS_VALUE",
+      "label": "realiseert",
+      "to": "revenue"
+    },
+    {
+      "from": "energy",
+      "type": "DELIVERS_VALUE",
+      "label": "belooft",
+      "to": "promise"
+    },
+    {
+      "from": "energy",
+      "type": "DELIVERS_VALUE",
+      "label": "streeft naar",
+      "to": "saving"
+    },
+    {
+      "from": "energy",
+      "type": "OFFERS",
+      "label": "biedt aan",
+      "to": "ems"
+    },
+    {
+      "from": "energy",
+      "type": "OFFERS",
+      "label": "verkoopt",
+      "to": "battery"
+    },
+    {
+      "from": "energy",
+      "type": "OFFERS",
+      "label": "verkoopt",
+      "to": "charger"
+    },
+    {
+      "from": "energy",
+      "type": "OFFERS",
+      "label": "biedt aan",
+      "to": "service"
+    },
+    {
+      "from": "customer",
+      "type": "PRODUCES",
+      "label": "dient in",
+      "to": "lead"
+    },
+    {
+      "from": "lead",
+      "type": "RECORDED_AS",
+      "label": "wordt geregistreerd in",
+      "to": "crm"
+    },
+    {
+      "from": "lead",
+      "type": "ENABLES",
+      "label": "leidt tot",
+      "to": "advice"
+    },
+    {
+      "from": "customer",
+      "type": "CONSUMES",
+      "label": "ontvangt",
+      "to": "advice"
+    },
+    {
+      "from": "advice",
+      "type": "USES",
+      "label": "gebruikt",
+      "to": "meter"
+    },
+    {
+      "from": "advice",
+      "type": "USES",
+      "label": "beoordeelt",
+      "to": "solar"
+    },
+    {
+      "from": "advice",
+      "type": "USES",
+      "label": "beoordeelt",
+      "to": "charger"
+    },
+    {
+      "from": "advice",
+      "type": "USES",
+      "label": "beoordeelt",
+      "to": "battery"
+    },
+    {
+      "from": "advice",
+      "type": "ENABLES",
+      "label": "onderbouwt",
+      "to": "offer"
+    },
+    {
+      "from": "offer",
+      "type": "INCLUDES",
+      "label": "bevat eventueel",
+      "to": "battery"
+    },
+    {
+      "from": "offer",
+      "type": "INCLUDES",
+      "label": "bevat eventueel",
+      "to": "charger"
+    },
+    {
+      "from": "offer",
+      "type": "REQUIRES",
+      "label": "vraagt capaciteitscheck van",
+      "to": "planning"
+    },
+    {
+      "from": "offer",
+      "type": "ENABLES",
+      "label": "kan worden vastgelegd als",
+      "to": "contract"
+    },
+    {
+      "from": "contract",
+      "type": "CONTRACTS_WITH",
+      "label": "bindt",
+      "to": "customer"
+    },
+    {
+      "from": "contract",
+      "type": "INCLUDES",
+      "label": "kan omvatten",
+      "to": "service"
+    },
+    {
+      "from": "contract",
+      "type": "INCLUDES",
+      "label": "kan combineren met",
+      "to": "dynamic"
+    },
+    {
+      "from": "crm",
+      "type": "MANAGES",
+      "label": "beheert",
+      "to": "offer"
+    },
+    {
+      "from": "crm",
+      "type": "MANAGES",
+      "label": "beheert",
+      "to": "contract"
+    },
+    {
+      "from": "crm_api",
+      "type": "INTEGRATES_WITH",
+      "label": "wisselt gegevens uit met",
+      "to": "crm"
+    },
+    {
+      "from": "crm_api",
+      "type": "PRODUCES",
+      "label": "levert gegevens aan",
+      "to": "install_order"
+    },
+    {
+      "from": "manufacturer",
+      "type": "PRODUCES",
+      "label": "levert",
+      "to": "battery"
+    },
+    {
+      "from": "installer_partner",
+      "type": "USES",
+      "label": "zet in",
+      "to": "technician"
+    },
+    {
+      "from": "utility",
+      "type": "OFFERS",
+      "label": "biedt aan",
+      "to": "dynamic"
+    },
+    {
+      "from": "battery",
+      "type": "PRODUCES",
+      "label": "meldt",
+      "to": "soc"
+    },
+    {
+      "from": "solar",
+      "type": "PRODUCES",
+      "label": "produceert",
+      "to": "pvdata"
+    },
+    {
+      "from": "charger",
+      "type": "RECORDED_AS",
+      "label": "registreert",
+      "to": "sessions"
+    },
+    {
+      "from": "app",
+      "type": "CONSUMES",
+      "label": "ontvangt",
+      "to": "prefs"
+    },
+    {
+      "from": "app",
+      "type": "USES",
+      "label": "gebruikt",
+      "to": "portal"
+    },
+    {
+      "from": "app",
+      "type": "REPRESENTS",
+      "label": "toont",
+      "to": "meter"
+    },
+    {
+      "from": "app",
+      "type": "REPRESENTS",
+      "label": "toont",
+      "to": "soc"
+    },
+    {
+      "from": "app",
+      "type": "REPRESENTS",
+      "label": "toont",
+      "to": "sessions"
+    },
+    {
+      "from": "dynamic",
+      "type": "DEPENDS_ON",
+      "label": "is gerelateerd aan",
+      "to": "prices"
+    },
+    {
+      "from": "ems",
+      "type": "USES",
+      "label": "maakt gebruik van",
+      "to": "optim"
+    },
+    {
+      "from": "ems",
+      "type": "CONSTRAINS",
+      "label": "laat beperken door",
+      "to": "rules"
+    },
+    {
+      "from": "ems",
+      "type": "CONTROLS",
+      "label": "stuurt binnen grenzen",
+      "to": "battery"
+    },
+    {
+      "from": "ems",
+      "type": "CONTROLS",
+      "label": "stuurt binnen grenzen",
+      "to": "charger"
+    },
+    {
+      "from": "saving",
+      "type": "SUPPORTED_BY",
+      "label": "kan ondersteund worden door",
+      "to": "ems"
+    },
+    {
+      "from": "revenue",
+      "type": "INCLUDES",
+      "label": "bevat inkomsten uit",
+      "to": "service"
+    },
+    {
+      "from": "promise",
+      "type": "DELIVERED_BY",
+      "label": "wordt ingevuld door",
+      "to": "service"
+    },
+    {
+      "from": "promise",
+      "type": "SUPPORTED_BY",
+      "label": "wordt ondersteund door",
+      "to": "monitor"
+    },
+    {
+      "from": "planning",
+      "type": "SCHEDULES",
+      "label": "plant in",
+      "to": "install_order"
+    },
+    {
+      "from": "install_order",
+      "type": "APPLIES_TO",
+      "label": "vindt plaats bij",
+      "to": "customer"
+    },
+    {
+      "from": "install_order",
+      "type": "INCLUDES",
+      "label": "omvat apparaat",
+      "to": "battery"
+    },
+    {
+      "from": "install_order",
+      "type": "INCLUDES",
+      "label": "kan omvatten",
+      "to": "charger"
+    },
+    {
+      "from": "install_order",
+      "type": "DELIVERED_BY",
+      "label": "wordt uitgevoerd door",
+      "to": "technician"
+    },
+    {
+      "from": "install_order",
+      "type": "ENABLES",
+      "label": "wordt afgesloten met",
+      "to": "commission"
+    },
+    {
+      "from": "commission",
+      "type": "VALIDATES",
+      "label": "controleert verbinding met",
+      "to": "battery_api"
+    },
+    {
+      "from": "commission",
+      "type": "VALIDATES",
+      "label": "controleert verbinding met",
+      "to": "charger_api"
+    },
+    {
+      "from": "commission",
+      "type": "RECORDED_AS",
+      "label": "registreert status in",
+      "to": "monitor"
+    },
+    {
+      "from": "ticket",
+      "type": "APPLIES_TO",
+      "label": "heeft betrekking op",
+      "to": "customer"
+    },
+    {
+      "from": "ticket",
+      "type": "USES",
+      "label": "start met",
+      "to": "diagnosis"
+    },
+    {
+      "from": "ticket",
+      "type": "DELIVERED_BY",
+      "label": "kan worden toegewezen aan",
+      "to": "technician"
+    },
+    {
+      "from": "diagnosis",
+      "type": "USES",
+      "label": "gebruikt",
+      "to": "monitor"
+    },
+    {
+      "from": "diagnosis",
+      "type": "INTEGRATES_WITH",
+      "label": "kan uitlezen via",
+      "to": "battery_api"
+    },
+    {
+      "from": "diagnosis",
+      "type": "INTEGRATES_WITH",
+      "label": "kan uitlezen via",
+      "to": "charger_api"
+    },
+    {
+      "from": "service",
+      "type": "INCLUDES",
+      "label": "omvat afhandeling van",
+      "to": "ticket"
+    },
+    {
+      "from": "service",
+      "type": "INCLUDES",
+      "label": "omvat",
+      "to": "diagnosis"
+    },
+    {
+      "from": "prices",
+      "type": "PRODUCES",
+      "label": "voedt",
+      "to": "optim"
+    },
+    {
+      "from": "meter",
+      "type": "CONSUMES",
+      "label": "wordt verwerkt door",
+      "to": "pipeline"
+    },
+    {
+      "from": "pvdata",
+      "type": "CONSUMES",
+      "label": "wordt verwerkt door",
+      "to": "pipeline"
+    },
+    {
+      "from": "soc",
+      "type": "INTEGRATES_WITH",
+      "label": "wordt ontsloten via",
+      "to": "battery_api"
+    },
+    {
+      "from": "sessions",
+      "type": "INTEGRATES_WITH",
+      "label": "wordt ontsloten via",
+      "to": "charger_api"
+    },
+    {
+      "from": "weather",
+      "type": "PRODUCES",
+      "label": "voedt",
+      "to": "optim"
+    },
+    {
+      "from": "prefs",
+      "type": "CONSTRAINS",
+      "label": "stelt grenzen aan",
+      "to": "rules"
+    },
+    {
+      "from": "grid",
+      "type": "CONSTRAINS",
+      "label": "kan grenzen opleggen aan",
+      "to": "rules"
+    },
+    {
+      "from": "battery_api",
+      "type": "PRODUCES",
+      "label": "levert status aan",
+      "to": "pipeline"
+    },
+    {
+      "from": "charger_api",
+      "type": "PRODUCES",
+      "label": "levert sessies aan",
+      "to": "pipeline"
+    },
+    {
+      "from": "pipeline",
+      "type": "PRODUCES",
+      "label": "levert actuele gegevens aan",
+      "to": "optim"
+    },
+    {
+      "from": "pipeline",
+      "type": "PRODUCES",
+      "label": "levert inzicht aan",
+      "to": "portal"
+    },
+    {
+      "from": "optim",
+      "type": "VALIDATED_BY",
+      "label": "laat toetsen door",
+      "to": "rules"
+    },
+    {
+      "from": "rules",
+      "type": "INTEGRATES_WITH",
+      "label": "verstuurt opdrachten via",
+      "to": "battery_api"
+    },
+    {
+      "from": "rules",
+      "type": "INTEGRATES_WITH",
+      "label": "verstuurt opdrachten via",
+      "to": "charger_api"
+    },
+    {
+      "from": "monitor",
+      "type": "PRODUCES",
+      "label": "kan aanmaken",
+      "to": "ticket"
+    },
+    {
+      "from": "monitor",
+      "type": "MONITORS",
+      "label": "bewaakt",
+      "to": "pipeline"
+    },
+    {
+      "from": "monitor",
+      "type": "MONITORS",
+      "label": "bewaakt",
+      "to": "battery_api"
+    },
+    {
+      "from": "monitor",
+      "type": "MONITORS",
+      "label": "bewaakt",
+      "to": "charger_api"
+    },
+    {
+      "from": "portal",
+      "type": "MANAGES",
+      "label": "beheert",
+      "to": "prefs"
+    },
+    {
+      "from": "portal",
+      "type": "INTEGRATES_WITH",
+      "label": "vraagt contractstatus op via",
+      "to": "crm_api"
+    },
+    {
+      "from": "customer",
+      "type": "USES",
+      "label": "gebruikt",
+      "to": "app"
+    },
+    {
+      "from": "ems",
+      "type": "DELIVERS_VALUE",
+      "label": "biedt waarde aan",
+      "to": "customer"
+    },
+    {
+      "from": "ems",
+      "type": "DELIVERS_VALUE",
+      "label": "draagt bij aan",
+      "to": "saving"
+    },
+    {
+      "from": "ems",
+      "type": "DELIVERED_BY",
+      "label": "wordt aangeboden door",
+      "to": "energy"
+    },
+    {
+      "from": "ems",
+      "type": "INTEGRATES_WITH",
+      "label": "heeft interface",
+      "to": "app"
+    },
+    {
+      "from": "service",
+      "type": "SERVES",
+      "label": "biedt ondersteuning aan",
+      "to": "customer"
+    },
+    {
+      "from": "service",
+      "type": "DELIVERED_BY",
+      "label": "wordt geleverd via",
+      "to": "installer_partner"
+    },
+    {
+      "from": "service",
+      "type": "USES",
+      "label": "gebruikt",
+      "to": "monitor"
+    },
+    {
+      "from": "service",
+      "type": "INCLUDES",
+      "label": "omvat",
+      "to": "commission"
+    },
+    {
+      "from": "service",
+      "type": "PART_OF",
+      "label": "is onderdeel van",
+      "to": "contract"
+    }
+  ],
+  "views": [
+    {
+      "id": "business",
+      "label": "Commercieel overzicht",
+      "button": "Toon businessbeeld",
+      "audience": "ondernemers en sales",
+      "purpose": "Welke problemen, partijen, verkoopobjecten en producten zijn aan de oplossing verbonden?",
+      "sections": [
+        {
+          "title": "Oplossing",
+          "select": {
+            "types": [
+              "BusinessSolution"
+            ]
+          }
+        },
+        {
+          "title": "Business en partners",
+          "select": {
+            "types": [
+              "Organization",
+              "BusinessValue"
+            ]
+          }
+        },
+        {
+          "title": "Sales",
+          "select": {
+            "types": [
+              "SalesObject"
+            ]
+          }
+        },
+        {
+          "title": "Producten en diensten",
+          "select": {
+            "types": [
+              "Product"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "technical",
+      "label": "Technisch overzicht",
+      "button": "Toon technisch beeld",
+      "audience": "softwareontwikkeling en architectuur",
+      "purpose": "Welke software, dataconcepten en integraties zijn nodig?",
+      "sections": [
+        {
+          "title": "Oplossing en producten",
+          "select": {
+            "types": [
+              "BusinessSolution",
+              "Product"
+            ]
+          }
+        },
+        {
+          "title": "Softwarefuncties",
+          "select": {
+            "types": [
+              "Capability"
+            ]
+          }
+        },
+        {
+          "title": "API’s en koppelingen",
+          "select": {
+            "types": [
+              "Integration"
+            ]
+          }
+        },
+        {
+          "title": "Dataconcepten",
+          "select": {
+            "types": [
+              "DataConcept"
+            ]
+          }
+        },
+        {
+          "title": "Softwareplatform",
+          "select": {
+            "types": [
+              "Infrastructure"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "delivery",
+      "label": "Uitvoering en service",
+      "button": "Toon uitvoering",
+      "audience": "operations en service",
+      "purpose": "Welke activiteiten en technische afhankelijkheden horen bij de oplossing?",
+      "sections": [
+        {
+          "title": "Oplossing",
+          "select": {
+            "types": [
+              "BusinessSolution"
+            ]
+          }
+        },
+        {
+          "title": "Uitvoering",
+          "select": {
+            "types": [
+              "DeliveryActivity"
+            ]
+          }
+        },
+        {
+          "title": "Partijen en systemen",
+          "select": {
+            "types": [
+              "Organization",
+              "Integration",
+              "Infrastructure"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+};
+
+/* =====================================================================
+   2. GRAPH MODEL — pure functions, no Three.js.
+   ===================================================================== */
+const Model = (() => {
+  const SOURCE_BY_TYPE = {
+    HardwareComponent: "Illustrative specification", Infrastructure: "Illustrative specification",
+    DataConcept: "Illustrative specification", Integration: "Illustrative specification",
+    ValidationTest: "Example validation record", ValidationEvidence: "Example validation record"
+  };
+  function normalize(raw) {
+    const d = JSON.parse(JSON.stringify(raw));
+    d.meta = d.meta || {}; d.meta.nodeTypes = d.meta.nodeTypes || {};
+    d.meta.solutionType = d.meta.solutionType || "BusinessSolution";
+    d.meta.contextTypes = d.meta.contextTypes || [];
+    d.meta.nonExpandingRelations = d.meta.nonExpandingRelations || [];
+    d.domains = d.domains || []; d.relationshipTypes = d.relationshipTypes || []; d.views = d.views || [];
+    d.nodes = (d.nodes || []).map(n => ({
+      status: "Reviewed", source: SOURCE_BY_TYPE[n.type] || "Synthetic demo source", domains: [], description: "", ...n
+    }));
+    d.edges = (d.edges || []).map(e => Array.isArray(e) ? { from: e[0], type: e[1], to: e[2] } : e);
+    return d;
+  }
+  function build(raw) {
+    const data = normalize(raw);
+    const nodes = new Map(data.nodes.map(n => [n.id, n]));
+    const out = new Map(), inc = new Map();
+    nodes.forEach((_, id) => { out.set(id, []); inc.set(id, []); });
+    const edges = [];
+    data.edges.forEach((e, i) => {
+      if (!nodes.has(e.from) || !nodes.has(e.to)) { console.warn("Skipping dangling edge", e); return; }
+      const ed = { ...e, id: "e" + i }; edges.push(ed); out.get(e.from).push(ed); inc.get(e.to).push(ed);
+    });
+    const g = { data, nodes, edges, out, inc };
+    g.solutionIds = data.nodes.filter(n => n.type === data.meta.solutionType).map(n => n.id);
+    g.constellations = new Map(g.solutionIds.map(id => [id, constellation(g, id)]));
+    g.memberOf = new Map(); nodes.forEach((_, id) => g.memberOf.set(id, []));
+    g.constellations.forEach((c, sid) => c.nodes.forEach(id => { if (id !== sid) g.memberOf.get(id).push(sid); }));
+    g.sharedIds = [...nodes.keys()].filter(id => g.memberOf.get(id).length > 1);
+    return g;
+  }
+  // Constellation = everything reachable along relationship direction from the solution,
+  // never through another solution; context types only when directly linked.
+  function constellation(g, solId) {
+    const ctx = new Set(g.data.meta.contextTypes), back = new Set(g.data.meta.nonExpandingRelations), seen = new Set([solId]), q = [[solId, 0]];
+    while (q.length) {
+      const [id, depth] = q.shift();
+      for (const e of g.out.get(id)) {
+        const t = g.nodes.get(e.to);
+        if (seen.has(e.to) || back.has(e.type) || t.type === g.data.meta.solutionType) continue;
+        if (ctx.has(t.type) && depth > 0) continue;
+        seen.add(e.to); q.push([e.to, depth + 1]);
+      }
+    }
+    return { nodes: seen, edges: g.edges.filter(e => seen.has(e.from) && seen.has(e.to)) };
+  }
+  function matches(g, id, sel, c) {
+    if (!sel) return true;
+    if (sel.anyOf) return sel.anyOf.some(s => matches(g, id, s, c));
+    const n = g.nodes.get(id);
+    if (sel.types && !sel.types.includes(n.type)) return false;
+    if (sel.relation) return c.edges.some(e => e.type === sel.relation.type && e[sel.relation.side] === id);
+    return true;
+  }
+  function describeQuery(sel) {
+    if (!sel) return "all objects";
+    if (sel.anyOf) return sel.anyOf.map(describeQuery).join("  OR  ");
+    const p = [];
+    if (sel.types) p.push("type ∈ {" + sel.types.join(", ") + "}");
+    if (sel.relation) p.push((sel.relation.side === "from" ? "source of " : "target of ") + sel.relation.type);
+    return p.join(" AND ");
+  }
+  // A document is a query over the constellation — nothing is stored.
+  function runView(g, solId, viewId) {
+    const view = g.data.views.find(v => v.id === viewId);
+    const c = g.constellations.get(solId);
+    const all = new Set([solId]);
+    const sections = view.sections.map((s, i) => {
+      let ids = [...c.nodes].filter(id => matches(g, id, s.select, c));
+      const key = s.sortBy;
+      ids.sort((a, b) => {
+        const A = g.nodes.get(a), B = g.nodes.get(b);
+        if (key && A[key] != null && B[key] != null) return A[key] - B[key];
+        return A.type === B.type ? A.label.localeCompare(B.label) : A.type.localeCompare(B.type);
+      });
+      ids.forEach(id => all.add(id));
+      return { index: i + 1, title: s.title, query: describeQuery(s.select), nodeIds: ids };
+    });
+    const edges = c.edges.filter(e => all.has(e.from) && all.has(e.to));
+    return { view, solId, sections, nodes: all, edges };
+  }
+  function payload(g, vr) {
+    const sol = g.nodes.get(vr.solId);
+    const obj = id => {
+      const n = g.nodes.get(id);
+      return { id, label: n.label, type: n.type, domains: n.domains, description: n.description, status: n.status, source: n.source,
+        relations: g.out.get(id).filter(e => vr.nodes.has(e.to)).map(e => ({ type: e.type, to: e.to })) };
+    };
+    return {
+      document: vr.view.label, audience: vr.view.audience, purpose: vr.view.purpose,
+      solution: { id: sol.id, label: sol.label },
+      renderInstructions: "Write a human-readable " + vr.view.label + " for: " + vr.view.audience +
+        ". Use only the objects and relationships below. Do not add facts. Flag gaps instead of filling them.",
+      sections: vr.sections.map(s => ({ title: s.title, query: s.query, objects: s.nodeIds.map(obj) })),
+      disclaimer: g.data.meta.disclaimer
+    };
+  }
+  return { build, runView, payload, constellation };
+})();
+
+/* =====================================================================
+   3. SEMANTIC LAYOUT — deterministic; domains anchor to cube faces.
+   ===================================================================== */
+const LAYOUT = {
+  half: 5, faceDepth: 0.76, multiDepth: 0.66, tangential: 0.55, tangentialMulti: 0.26, normalJitter: 0.07,
+  solutionPull: 0.32, iterations: 280, minDist: 1.05,
+  anchors: { BUSINESS: [0,1,0], DEVELOPMENT: [0,-1,0], PRODUCT: [1,0,0], OPERATIONS: [-1,0,0], DATA: [0,0,1], SALES: [0,0,-1] }
+};
+function hashStr(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function anchorOf(d) {
+  if (LAYOUT.anchors[d]) return LAYOUT.anchors[d];
+  const r = rng(hashStr(d)); const v = [r() - .5, r() - .5, r() - .5]; const L = Math.hypot(...v); return v.map(x => x / L);
+}
+function computeLayout(g) {
+  const H = LAYOUT.half, pos = new Map(), target = new Map();
+  const add = (a, b, k = 1) => [a[0] + b[0] * k, a[1] + b[1] * k, a[2] + b[2] * k];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  g.nodes.forEach((n, id) => {
+    if (g.solutionIds.includes(id)) return;
+    const r = rng(hashStr(id));
+    let a = [0, 0, 0]; (n.domains.length ? n.domains : ["_"]).forEach(d => a = add(a, anchorOf(d)));
+    let L = Math.hypot(...a); if (L < 1e-6) { a = [r() - .5, r() - .5, r() - .5]; L = Math.hypot(...a); }
+    const nrm = a.map(x => x / L), multi = n.domains.length > 1;
+    let p = nrm.map(x => x * H * (multi ? LAYOUT.multiDepth : LAYOUT.faceDepth));
+    const j = [r() * 2 - 1, r() * 2 - 1, r() * 2 - 1], jn = dot(j, nrm);
+    const tan = add(j, nrm, -jn);
+    p = add(p, tan, H * (multi ? LAYOUT.tangentialMulti : LAYOUT.tangential));
+    p = add(p, nrm, jn * H * LAYOUT.normalJitter);
+    target.set(id, p); pos.set(id, p.slice());
+  });
+  g.solutionIds.forEach(sid => {
+    const c = [...g.constellations.get(sid).nodes].filter(id => id !== sid && target.has(id));
+    let m = [0, 0, 0]; c.forEach(id => m = add(m, target.get(id)));
+    m = m.map(x => x / Math.max(1, c.length) * LAYOUT.solutionPull);
+    const r = rng(hashStr(sid)); m = add(m, [r() - .5, r() - .5, r() - .5], 0.6);
+    target.set(sid, m); pos.set(sid, m.slice());
+  });
+  const ids = [...pos.keys()], lim = H * 0.9, md = LAYOUT.minDist;
+  for (let it = 0; it < LAYOUT.iterations; it++) {
+    const cool = 1 - it / LAYOUT.iterations;
+    const f = new Map(ids.map(id => [id, [0, 0, 0]]));
+    for (let i = 0; i < ids.length; i++) for (let k = i + 1; k < ids.length; k++) {
+      const A = pos.get(ids[i]), B = pos.get(ids[k]);
+      const d = [A[0] - B[0], A[1] - B[1], A[2] - B[2]]; let L = Math.hypot(...d);
+      if (L < 1e-4) { d[0] = 0.01 * (i - k); L = 0.01; }
+      const both = g.solutionIds.includes(ids[i]) && g.solutionIds.includes(ids[k]);
+      const range = md * (both ? 3.2 : 1.8);
+      if (L < range) {
+        const s = (range - L) / L * 0.22;
+        f.set(ids[i], add(f.get(ids[i]), d, s)); f.set(ids[k], add(f.get(ids[k]), d, -s));
+      }
+    }
+    g.edges.forEach(e => {
+      const A = pos.get(e.from), B = pos.get(e.to); const d = [B[0] - A[0], B[1] - A[1], B[2] - A[2]]; const L = Math.hypot(...d);
+      if (L > 3.6) { const s = (L - 3.6) / L * 0.012; f.set(e.from, add(f.get(e.from), d, s)); f.set(e.to, add(f.get(e.to), d, -s)); }
+    });
+    ids.forEach(id => {
+      const P = pos.get(id), T = target.get(id);
+      let v = add(f.get(id), [T[0] - P[0], T[1] - P[1], T[2] - P[2]], 0.06);
+      v = v.map(x => Math.max(-0.35, Math.min(0.35, x)) * (0.4 + 0.6 * cool));
+      pos.set(id, add(P, v).map(x => Math.max(-lim, Math.min(lim, x))));
+    });
+  }
+  return pos;
+}
+function semanticPosition(g, n, p) {
+  const names = n.domains.map(d => (g.data.domains.find(x => x.id === d) || { label: d }).label);
+  let txt;
+  if (n.type === g.data.meta.solutionType) txt = "Centroid of its constellation, drawn toward the core";
+  else if (names.length === 1) txt = "Anchored near the " + names[0] + " face";
+  else if (names.length === 2) txt = "Between " + names[0] + " and " + names[1];
+  else txt = "Blended across " + names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
+  return txt + "  (" + p.map(x => x.toFixed(1)).join(", ") + ")";
+}
+
+/* =====================================================================
+   4. RENDERING — Three.js scene built from the model.
+   ===================================================================== */
+const DOMAIN_COLOR = { BUSINESS: "#a9c7ff", SALES: "#d4a6fa", PRODUCT: "#4fd1e6", OPERATIONS: "#7fbfd0", DATA: "#6ee7a8", DEVELOPMENT: "#5f8dff" };
+const TYPE_STYLE = {
+  BusinessSolution:   { geo: "octa",   size: .42, color: 0xe8dcc0, glow: 2.8, icon: "◆" },
+  BusinessProblem:    { geo: "tetra",  size: .21, color: 0x9fb3d6, glow: 1.0, icon: "▲" },
+  BusinessValue:      { geo: "octa",   size: .17, color: 0x8fe8cf, glow: 1.1, icon: "◇" },
+  AssetType:          { geo: "box",    size: .23, color: 0xd0dcff, glow: 1.1, icon: "▣" },
+  Capability:         { geo: "ico",    size: .22, color: 0x4fd1e6, glow: 1.4, icon: "⬢" },
+  HardwareComponent:  { geo: "box",    size: .18, color: 0x6f9fff, glow: 1.0, icon: "■" },
+  Infrastructure:     { geo: "cyl",    size: .21, color: 0x4b86f0, glow: 1.0, icon: "⬡" },
+  DataConcept:        { geo: "sphere", size: .13, color: 0x6ee7a8, glow: 1.0, icon: "●" },
+  Integration:        { geo: "dodeca", size: .2,  color: 0x8ab8ff, glow: 1.2, icon: "⬟" },
+  DeliveryActivity:   { geo: "sphere", size: .15, color: 0x6cc3d8, glow: 0.9, icon: "○" },
+  ValidationTest:     { geo: "torus",  size: .15, color: 0xa6e07e, glow: 1.0, icon: "◎" },
+  ValidationEvidence: { geo: "octa",   size: .15, color: 0xd4f28c, glow: 1.4, icon: "✦" }
+};
+Object.assign(TYPE_STYLE, {
+  Organization: { geo: "octa", size: .24, color: 0xc7cbed, glow: 1.4, icon: "◆" },
+  SalesObject: { geo: "tetra", size: .18, color: 0xd4a6fa, glow: 1.0, icon: "▲" },
+  Product: { geo: "box", size: .22, color: 0x72e1e5, glow: 1.3, icon: "▣" }
+});
+const DEFAULT_STYLE = { geo: "sphere", size: .15, color: 0x9fb2cc, glow: 1, icon: "·" };
+const WARM = 0xffb25c;
+const LEVEL = {
+  node: { focus: 1, normal: .85, context: .42, dim: .1, hidden: .025 },
+  edge: { focus: .8, normal: .17, context: .09, dim: .025, hidden: 0 }
+};
+const styleOf = t => TYPE_STYLE[t] || DEFAULT_STYLE;
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const $ = s => document.querySelector(s);
+
+let G = null;             // model
+let POS = null;           // layout
+const state = { activeSolution: null, viewResult: null, selected: null, hovered: null, sectionFocus: null,
+  domains: new Set(), showReuse: false, labelsAll: false, autoRotate: false, returnToView: false };
+
+if (typeof THREE === "undefined" || !THREE.OrbitControls) {
+  const e = $("#err"); e.style.display = "grid"; e.textContent = "Three.js could not be loaded from the CDN. Check the network connection and reload the page.";
+  throw new Error("THREE missing");
+}
+
+const stage = $("#stage");
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+stage.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x040914, 0.012);
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 600);
+const CAM_HOME = new THREE.Vector3(14.5, 8.5, 16.5);
+camera.position.copy(CAM_HOME);
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.08; controls.screenSpacePanning = true;
+controls.minDistance = 5; controls.maxDistance = 48; controls.autoRotateSpeed = 0.35; controls.rotateSpeed = 0.6;
+const camGoal = { target: null };
+
+// textures
+function radialTex() {
+  const c = document.createElement("canvas"); c.width = c.height = 128; const x = c.getContext("2d");
+  const g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(.18, "rgba(255,255,255,.42)"); g.addColorStop(.45, "rgba(255,255,255,.08)"); g.addColorStop(1, "rgba(255,255,255,0)");
+  x.fillStyle = g; x.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c);
+}
+function ringTex(dashed) {
+  const c = document.createElement("canvas"); c.width = c.height = 128; const x = c.getContext("2d");
+  x.strokeStyle = "rgba(255,255,255,.95)"; x.lineWidth = dashed ? 3 : 2.2; if (dashed) x.setLineDash([7, 7]);
+  x.beginPath(); x.arc(64, 64, 58, 0, Math.PI * 2); x.stroke(); return new THREE.CanvasTexture(c);
+}
+const GLOW_TEX = radialTex(), RING_TEX = ringTex(false), DASH_TEX = ringTex(true);
+
+// starfield
+(function starfield() {
+  const r = rng(7), N = 2200, p = new Float32Array(N * 3), col = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) {
+    const u = r() * 2 - 1, th = r() * Math.PI * 2, rad = 70 + r() * 110, s = Math.sqrt(1 - u * u);
+    p.set([rad * s * Math.cos(th), rad * u, rad * s * Math.sin(th)], i * 3);
+    const b = .35 + r() * .65, t = r();
+    col.set([b * (.7 + .2 * t), b * (.82 + .1 * t), b], i * 3);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(p, 3)); geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
+  const stars = new THREE.Points(geo, new THREE.PointsMaterial({ size: .5, vertexColors: true, transparent: true, opacity: .6, depthWrite: false, fog: false }));
+  scene.add(stars);
+  [[-60, 20, -90, 0x1b3d7a, 90], [70, -30, -60, 0x0f4c5c, 70], [10, 50, 90, 0x1a2f66, 80]].forEach(([x, y, z, c, s]) => {
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW_TEX, color: c, transparent: true, opacity: .16, depthWrite: false, fog: false }));
+    sp.position.set(x, y, z); sp.scale.setScalar(s); scene.add(sp);
+  });
+})();
+
+// cube
+const cube = { faces: {} };
+(function buildCube() {
+  const H = LAYOUT.half, grp = new THREE.Group();
+  grp.add(new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(2 * H, 2 * H, 2 * H)),
+    new THREE.LineBasicMaterial({ color: 0x6d93c4, transparent: true, opacity: .32 })));
+  Object.entries(LAYOUT.anchors).forEach(([dom, ax]) => {
+    const i = ax.findIndex(v => v !== 0), s = ax[i], [u, v] = [0, 1, 2].filter(k => k !== i);
+    const pts = [], step = H / 4;
+    for (let k = -H + step; k < H - 1e-6; k += step) {
+      const a = [0, 0, 0], b = [0, 0, 0], c = [0, 0, 0], d = [0, 0, 0];
+      a[i] = b[i] = c[i] = d[i] = s * H;
+      a[u] = -H; a[v] = k; b[u] = H; b[v] = k; c[u] = k; c[v] = -H; d[u] = k; d[v] = H;
+      pts.push(...a, ...b, ...c, ...d);
+    }
+    const geo = new THREE.BufferGeometry(); geo.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
+    const col = new THREE.Color(DOMAIN_COLOR[dom]);
+    const gridMat = new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: .05, depthWrite: false });
+    grp.add(new THREE.LineSegments(geo, gridMat));
+    const plane = new THREE.Mesh(new THREE.PlaneGeometry(2 * H, 2 * H),
+      new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: .012, side: THREE.DoubleSide, depthWrite: false }));
+    const nrm = new THREE.Vector3(...ax); plane.position.copy(nrm.clone().multiplyScalar(H));
+    plane.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), nrm); grp.add(plane);
+    const lbl = document.createElement("div"); lbl.className = "flbl"; lbl.style.color = DOMAIN_COLOR[dom];
+    $("#faceLabels").appendChild(lbl);
+    cube.faces[dom] = { gridMat, planeMat: plane.material, lbl, pos: nrm.clone().multiplyScalar(H + 1.25), cur: 0 };
+  });
+  scene.add(grp);
+})();
+
+// graph objects (rebuilt when graph data is replaced)
+let graphGroup = null, NODE_OBJ = new Map(), EDGE_OBJ = new Map(), HIT = [];
+const HIT_GEO = new THREE.SphereGeometry(1, 8, 6), HIT_MAT = new THREE.MeshBasicMaterial({ visible: false });
+const ARROW_GEO = new THREE.ConeGeometry(.055, .2, 6);
+function makeGeo(kind, s) {
+  switch (kind) {
+    case "octa": return new THREE.OctahedronGeometry(s, 0);
+    case "tetra": return new THREE.TetrahedronGeometry(s * 1.1, 0);
+    case "box": return new THREE.BoxGeometry(s * 1.3, s * 1.3, s * 1.3);
+    case "ico": return new THREE.IcosahedronGeometry(s, 0);
+    case "cyl": return new THREE.CylinderGeometry(s * .8, s * .8, s * 1.3, 6);
+    case "dodeca": return new THREE.DodecahedronGeometry(s, 0);
+    case "torus": return new THREE.TorusGeometry(s * .8, s * .25, 4, 10);
+    default: return new THREE.IcosahedronGeometry(s, 1);
+  }
+}
+function clearGraph() {
+  if (!graphGroup) return;
+  graphGroup.traverse(o => { if (o.geometry && o.geometry !== HIT_GEO && o.geometry !== ARROW_GEO) o.geometry.dispose(); if (o.material && o.material !== HIT_MAT) o.material.dispose(); });
+  scene.remove(graphGroup); $("#labels").innerHTML = ""; $("#edgeLabels").innerHTML = "";
+  NODE_OBJ = new Map(); EDGE_OBJ = new Map(); HIT = [];
+}
+function buildGraph() {
+  clearGraph(); graphGroup = new THREE.Group(); scene.add(graphGroup);
+  G.nodes.forEach((n, id) => {
+    const st = styleOf(n.type), p = POS.get(id), grp = new THREE.Group(); grp.position.set(...p);
+    const geo = makeGeo(st.geo, st.size);
+    const fill = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: st.color, transparent: true, opacity: .3, depthWrite: false }));
+    const wire = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: st.color, transparent: true, opacity: .95 }));
+    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW_TEX, color: st.color, transparent: true, opacity: .5, blending: THREE.AdditiveBlending, depthWrite: false }));
+    glow.scale.setScalar(st.size * st.glow * 4.2);
+    const spin = new THREE.Group(); spin.add(fill, wire); grp.add(spin, glow);
+    const r = rng(hashStr(id)); spin.rotation.set(r() * 3, r() * 3, r() * 3);
+    let halo = null, share = null;
+    if (n.type === G.data.meta.solutionType) {
+      halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: RING_TEX, color: st.color, transparent: true, opacity: .5, depthWrite: false }));
+      halo.scale.setScalar(st.size * 3.4); grp.add(halo);
+    }
+    if (G.sharedIds.includes(id)) {
+      share = new THREE.Sprite(new THREE.SpriteMaterial({ map: DASH_TEX, color: 0xe8dcc0, transparent: true, opacity: .35, depthWrite: false }));
+      share.scale.setScalar(Math.max(st.size * 3.1, .52)); grp.add(share);
+    }
+    const hit = new THREE.Mesh(HIT_GEO, HIT_MAT); hit.scale.setScalar(Math.max(st.size * 1.7, .3)); hit.userData.nodeId = id; grp.add(hit); HIT.push(hit);
+    graphGroup.add(grp);
+    const lbl = document.createElement("div"); lbl.className = "lbl" + (halo ? " sol" : ""); lbl.textContent = n.label;
+    $("#labels").appendChild(lbl);
+    NODE_OBJ.set(id, { n, st, grp, spin, fill, wire, glow, halo, share, lbl, spinRate: (r() - .5) * .25,
+      cur: .85, tgt: .85, warm: 0, warmTgt: 0, shareCur: .35, shareTgt: .35, lblCur: 0, lblTgt: 0, level: "normal" });
+  });
+  G.edges.forEach(e => {
+    const A = new THREE.Vector3(...POS.get(e.from)), B = new THREE.Vector3(...POS.get(e.to));
+    const ca = new THREE.Color(styleOf(G.nodes.get(e.from).type).color).multiplyScalar(.35);
+    const cb = new THREE.Color(styleOf(G.nodes.get(e.to).type).color);
+    const geo = new THREE.BufferGeometry().setFromPoints([A, B]);
+    geo.setAttribute("color", new THREE.Float32BufferAttribute([ca.r, ca.g, ca.b, cb.r, cb.g, cb.b], 3));
+    const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: .17, depthWrite: false }));
+    const dir = B.clone().sub(A); const L = dir.length(); dir.normalize();
+    const tr = styleOf(G.nodes.get(e.to).type).size + .16;
+    const arrow = new THREE.Mesh(ARROW_GEO, new THREE.MeshBasicMaterial({ color: cb, transparent: true, opacity: 0, depthWrite: false }));
+    arrow.position.copy(B.clone().addScaledVector(dir, -tr)); arrow.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+    const pulse = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW_TEX, color: cb, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
+    pulse.scale.setScalar(.22);
+    graphGroup.add(line, arrow, pulse);
+    const lbl = document.createElement("div"); lbl.className = "elbl"; lbl.textContent = e.label || e.type; lbl.style.display = "none";
+    $("#edgeLabels").appendChild(lbl);
+    EDGE_OBJ.set(e.id, { e, line, arrow, pulse, A, B, len: L, tr, lbl, cur: .17, tgt: .17, focus: 0, focusTgt: 0, phase: rng(hashStr(e.id))() });
+  });
+}
+
+/* ---------- visual state ---------- */
+function neighbourhood(id) {
+  const ns = new Set([id]), es = new Set();
+  G.out.get(id).forEach(e => { ns.add(e.to); es.add(e.id); });
+  G.inc.get(id).forEach(e => { ns.add(e.from); es.add(e.id); });
+  return { ns, es };
+}
+const isSolution = id => id && G.solutionIds.includes(id);
+function domainVisible(n) { return !n.domains.length || n.domains.some(d => state.domains.has(d)); }
+let LEVELS = { nodes: new Map(), edges: new Map(), labelEdges: new Set(), anyFocus: false };
+function computeLevels() {
+  let fN = null, fE = null;
+  if (state.showReuse) {
+    fN = new Set([...G.sharedIds, ...G.solutionIds]);
+    fE = new Set(G.edges.filter(e => fN.has(e.from) && fN.has(e.to)).map(e => e.id));
+  } else if (state.viewResult) { fN = state.viewResult.nodes; fE = new Set(state.viewResult.edges.map(e => e.id)); }
+  else if (state.activeSolution) { const c = G.constellations.get(state.activeSolution); fN = c.nodes; fE = new Set(c.edges.map(e => e.id)); }
+  let nb = null;
+  if (state.sectionFocus) nb = { ns: new Set(state.sectionFocus), es: new Set() };
+  else if (state.selected && !isSolution(state.selected)) nb = neighbourhood(state.selected);
+  const hv = state.hovered && state.hovered !== state.selected ? neighbourhood(state.hovered) : null;
+  const nodes = new Map(), edges = new Map();
+  G.nodes.forEach((n, id) => {
+    let l;
+    if (!domainVisible(n)) l = "hidden";
+    else if (nb) l = nb.ns.has(id) ? "focus" : (fN && fN.has(id) ? "context" : "dim");
+    else if (fN) l = fN.has(id) ? "focus" : "dim";
+    else l = "normal";
+    if (hv && l !== "hidden") {
+      if (hv.ns.has(id)) l = l === "dim" ? "context" : "focus";
+      else if (l === "normal") l = "context";
+    }
+    nodes.set(id, l);
+  });
+  G.edges.forEach(e => {
+    let l;
+    const a = nodes.get(e.from), b = nodes.get(e.to);
+    if (a === "hidden" || b === "hidden") l = "hidden";
+    else if (nb && nb.es.size) l = nb.es.has(e.id) ? "focus" : (fE && fE.has(e.id) ? "context" : "dim");
+    else if (nb) l = (nb.ns.has(e.from) && nb.ns.has(e.to) && (!fE || fE.has(e.id))) ? "focus" : (fE && fE.has(e.id) ? "context" : "dim");
+    else if (fE) l = fE.has(e.id) ? "focus" : "dim";
+    else l = "normal";
+    if (hv && hv.es.has(e.id) && l !== "hidden") l = "focus";
+    else if (hv && l === "normal") l = "context";
+    edges.set(e.id, l);
+  });
+  const labelEdges = new Set();
+  if (state.selected && !isSolution(state.selected) && !state.sectionFocus) neighbourhood(state.selected).es.forEach(id => labelEdges.add(id));
+  if (hv) hv.es.forEach(id => labelEdges.add(id));
+  LEVELS = { nodes, edges, labelEdges, anyFocus: !!(fN || nb || hv) };
+  applyTargets();
+}
+function applyTargets() {
+  NODE_OBJ.forEach((o, id) => {
+    const l = LEVELS.nodes.get(id); o.level = l; o.tgt = LEVEL.node[l];
+    o.warmTgt = id === state.activeSolution ? 1 : 0;
+    const otherShared = o.share && (state.showReuse || (state.activeSolution && G.memberOf.get(id).includes(state.activeSolution)));
+    o.shareTgt = o.share ? (l === "hidden" ? 0 : otherShared ? .85 : .3 * o.tgt) : 0;
+    let show;
+    if (l === "hidden") show = 0;
+    else if (o.halo) show = l === "dim" ? .35 : 1;
+    else if (state.labelsAll) show = l === "focus" ? 1 : l === "normal" ? .8 : l === "context" ? .45 : .12;
+    else show = (LEVELS.anyFocus && l === "focus") || id === state.hovered || id === state.selected ? 1 : 0;
+    o.lblTgt = show;
+    o.lbl.classList.toggle("focus", l === "focus" && LEVELS.anyFocus);
+    o.lbl.classList.toggle("active", id === state.activeSolution);
+  });
+  EDGE_OBJ.forEach((o, id) => {
+    const l = LEVELS.edges.get(id); o.tgt = LEVEL.edge[l]; o.focusTgt = l === "focus" && LEVELS.anyFocus ? 1 : 0;
+    o.lbl.style.display = LEVELS.labelEdges.has(id) && l !== "hidden" ? "block" : "none";
+  });
+  const lit = new Set(); [state.selected, state.hovered].forEach(id => { if (id && G.nodes.has(id)) G.nodes.get(id).domains.forEach(d => lit.add(d)); });
+  Object.entries(cube.faces).forEach(([d, f]) => {
+    f.tgt = !state.domains.has(d) ? -1 : lit.has(d) ? 1 : 0;
+    f.lbl.classList.toggle("on", lit.has(d));
+    f.lbl.style.opacity = f.tgt < 0 ? .12 : "";
+  });
+  updatePipeline();
+}
+
+/* ---------- animation loop ---------- */
+const tmp = new THREE.Vector3(), warmC = new THREE.Color(WARM);
+let viewOff = 0, last = performance.now(), W = window.innerWidth, Hh = window.innerHeight;
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function project(v) { tmp.copy(v).project(camera); return { x: (tmp.x + 1) / 2 * W, y: (1 - tmp.y) / 2 * Hh, ok: tmp.z < 1 && tmp.z > -1 }; }
+function animate(now) {
+  requestAnimationFrame(animate);
+  const dt = Math.min(.05, (now - last) / 1000); last = now; const k = 1 - Math.pow(.001, dt);
+  controls.autoRotate = state.autoRotate && !reduceMotion;
+  if (camGoal.target) { controls.target.lerp(camGoal.target, k * .8); if (controls.target.distanceTo(camGoal.target) < .01) camGoal.target = null; }
+  const lw = $("#left").offsetWidth + 14, rw = $("#right").classList.contains("open") ? $("#right").offsetWidth + 14 : 0;
+  const wantOff = W > 900 ? (rw - lw) / 2 : 0;
+  viewOff += (wantOff - viewOff) * k;
+  if (Math.abs(viewOff) > .5) camera.setViewOffset(W, Hh, viewOff, 0, W, Hh); else if (camera.view && camera.view.enabled) camera.clearViewOffset();
+  controls.update();
+  Object.values(cube.faces).forEach(f => {
+    f.cur += (f.tgt - f.cur) * k;
+    f.gridMat.opacity = .05 + Math.max(0, f.cur) * .13 - Math.max(0, -f.cur) * .04;
+    f.planeMat.opacity = .012 + Math.max(0, f.cur) * .03;
+    const p = project(f.pos); f.lbl.style.transform = `translate(${p.x}px,${p.y}px) translate(-50%,-50%)`; f.lbl.style.visibility = p.ok ? "visible" : "hidden";
+  });
+  NODE_OBJ.forEach(o => {
+    o.cur += (o.tgt - o.cur) * k; o.warm += (o.warmTgt - o.warm) * k; o.shareCur += (o.shareTgt - o.shareCur) * k; o.lblCur += (o.lblTgt - o.lblCur) * k;
+    if (!reduceMotion) o.spin.rotation.y += o.spinRate * dt;
+    o.fill.material.opacity = .32 * o.cur; o.wire.material.opacity = .95 * o.cur;
+    o.glow.material.opacity = .55 * o.cur * o.cur + (o.level === "focus" && LEVELS.anyFocus ? .15 : 0);
+    if (o.halo) {
+      const base = new THREE.Color(o.st.color).lerp(warmC, o.warm);
+      o.wire.material.color.copy(base); o.fill.material.color.copy(base); o.glow.material.color.copy(base); o.halo.material.color.copy(base);
+      o.halo.material.opacity = (.35 + .45 * o.warm) * Math.max(.3, o.cur);
+      const s = 1 + o.warm * .35; o.spin.scale.setScalar(s);
+      o.halo.scale.setScalar(o.st.size * 3.4 * (1 + o.warm * (.25 + (reduceMotion ? 0 : .06 * Math.sin(now / 600)))));
+    }
+    if (o.share) o.share.material.opacity = o.shareCur;
+    const hov = state.hovered === o.n.id || state.selected === o.n.id;
+    const sc = hov ? 1.3 : 1; o.grp.scale.x += (sc - o.grp.scale.x) * k; o.grp.scale.y = o.grp.scale.z = o.grp.scale.x;
+    if (o.lblCur > .01) {
+      o.grp.getWorldPosition(tmp); const p = project(tmp);
+      const off = o.st.size * 38 / Math.max(1, camera.position.distanceTo(o.grp.position) / 10);
+      o.lbl.style.transform = `translate(${p.x + 8}px,${p.y - off - 4}px)`; o.lbl.style.opacity = p.ok ? o.lblCur : 0; o.lbl.style.display = "block";
+    } else o.lbl.style.display = "none";
+  });
+  EDGE_OBJ.forEach(o => {
+    o.cur += (o.tgt - o.cur) * k; o.focus += (o.focusTgt - o.focus) * k;
+    o.line.material.opacity = o.cur; o.arrow.material.opacity = o.focus * .9;
+    if (o.focus > .02 && !reduceMotion) {
+      const t = ((now / 1000) * .35 + o.phase) % 1;
+      o.pulse.position.lerpVectors(o.A, o.B, t * (1 - o.tr / o.len)); o.pulse.material.opacity = o.focus * .7 * Math.sin(t * Math.PI);
+    } else o.pulse.material.opacity = 0;
+    if (o.lbl.style.display === "block") {
+      tmp.lerpVectors(o.A, o.B, .5); const p = project(tmp);
+      o.lbl.style.transform = `translate(${p.x}px,${p.y}px) translate(-50%,-50%)`; o.lbl.style.visibility = p.ok ? "visible" : "hidden";
+    }
+  });
+  renderer.render(scene, camera);
+}
+
+/* ---------- picking ---------- */
+const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(); let downAt = null, pendingMove = null;
+function pick(ev) {
+  mouse.set(ev.clientX / W * 2 - 1, -(ev.clientY / Hh) * 2 + 1); ray.setFromCamera(mouse, camera);
+  const hits = ray.intersectObjects(HIT, false).filter(h => LEVELS.nodes.get(h.object.userData.nodeId) !== "hidden");
+  return hits.length ? hits[0].object.userData.nodeId : null;
+}
+renderer.domElement.addEventListener("pointermove", ev => {
+  if (pendingMove) { pendingMove = ev; return; } pendingMove = ev;
+  requestAnimationFrame(() => {
+    const e = pendingMove; pendingMove = null; const id = pick(e);
+    if (id !== state.hovered) { state.hovered = id; computeLevels(); }
+    renderer.domElement.style.cursor = id ? "pointer" : "";
+    showTip(id, e);
+  });
+});
+renderer.domElement.addEventListener("pointerleave", () => { state.hovered = null; showTip(null); computeLevels(); });
+renderer.domElement.addEventListener("pointerdown", ev => { downAt = [ev.clientX, ev.clientY]; state.autoRotate && (state.autoRotateWas = true); });
+renderer.domElement.addEventListener("pointerup", ev => {
+  if (!downAt || Math.hypot(ev.clientX - downAt[0], ev.clientY - downAt[1]) > 5) return;
+  const id = pick(ev);
+  if (id) selectNode(id, true); else if (state.selected) { state.selected = null; state.sectionFocus = null; restorePanel(); computeLevels(); }
+});
+function showTip(id, ev) {
+  const tip = $("#tip");
+  if (!id) { tip.style.opacity = 0; return; }
+  const n = G.nodes.get(id), st = styleOf(n.type), mem = G.memberOf.get(id);
+  tip.innerHTML = `<div class="tt">${st.icon} ${esc(typeLabel(n.type))}</div><div class="tn">${esc(n.label)}</div>
+    <div>${n.domains.map(chip).join("")}</div><div class="td">${esc(n.description)}</div>
+    ${mem.length > 1 ? `<div class="reuse" style="margin-top:4px">◌ Shared by ${mem.length} solutions</div>` : ""}`;
+  const x = Math.min(ev.clientX + 16, W - 290), y = Math.min(ev.clientY + 14, Hh - 150);
+  tip.style.transform = `translate(${x}px,${y}px)`; tip.style.opacity = 1;
+}
+
+/* =====================================================================
+   5. UI — panels, controls, document views
+   ===================================================================== */
+const typeLabel = t => G.data.meta.nodeTypes[t] || t;
+const domLabel = d => (G.data.domains.find(x => x.id === d) || { label: d }).label;
+const chip = d => `<span class="chip" style="color:${DOMAIN_COLOR[d] || "#9fb2cc"}" title="${esc(domLabel(d))}">${esc(d)}</span>`;
+const nodeLink = id => { const n = G.nodes.get(id); return `<button class="nl" data-node="${esc(id)}">${esc(n.label)}</button>`; };
+
+function renderLeft() {
+  $("#solList").innerHTML = G.solutionIds.map(id => {
+    const n = G.nodes.get(id), c = G.constellations.get(id);
+    return `<button class="solbtn ${id === state.activeSolution ? "active" : ""}" data-sol="${esc(id)}"><span class="dia">◆</span><span class="nm">${esc(n.label)}</span><span class="ct">${c.nodes.size}</span></button>`;
+  }).join("");
+  const sol = state.activeSolution || G.data.meta.primarySolution || G.solutionIds[0];
+  $("#viewFor").textContent = sol ? "for " + G.nodes.get(sol).label : "";
+  $("#viewList").innerHTML = G.data.views.map(v =>
+    `<button class="viewbtn ${state.viewResult && state.viewResult.view.id === v.id ? "active" : ""}" data-view="${esc(v.id)}">${esc((v.button || v.label).toUpperCase())}<small>${esc(v.label)} · ${esc(v.audience)}</small></button>`).join("");
+  $("#domList").innerHTML = G.data.domains.map(d => {
+    const count = [...G.nodes.values()].filter(n => n.domains.includes(d.id)).length;
+    return `<label class="dom" style="color:${DOMAIN_COLOR[d.id] || "#9fb2cc"}" title="${esc(d.description)}"><input type="checkbox" data-dom="${esc(d.id)}" ${state.domains.has(d.id) ? "checked" : ""}><span class="n">${esc(d.label)}</span><span class="c">${count}</span></label>`;
+  }).join("");
+  const types = [...new Set([...G.nodes.values()].map(n => n.type))];
+  $("#legend").innerHTML = types.map(t => { const s = styleOf(t); return `<span><b style="color:#${new THREE.Color(s.color).getHexString()}">${s.icon}</b>${esc(typeLabel(t))}</span>`; }).join("");
+  $("#stat").textContent = `${G.nodes.size} objects, ${G.edges.length} relationships, ${G.solutionIds.length} solutions, ${G.sharedIds.length} shared`;
+  $("#tReuse").classList.toggle("on", state.showReuse);
+  $("#tLabels").classList.toggle("on", state.labelsAll); $("#tLabels").textContent = "Labels: " + (state.labelsAll ? "all" : "focus");
+  $("#tRotate").classList.toggle("on", state.autoRotate);
+}
+function updatePipeline() {
+  $("#s2").classList.toggle("on", !!state.activeSolution);
+  $("#s3").classList.toggle("on", !!state.viewResult);
+  $("#s4").classList.toggle("on", !!state.viewResult);
+}
+function openPanel(html) { const r = $("#right"); r.innerHTML = html; r.classList.add("open"); r.scrollTop = 0; }
+function closePanel() { $("#right").classList.remove("open"); }
+
+function renderNodePanel(id) {
+  const n = G.nodes.get(id), st = styleOf(n.type), isSol = isSolution(id);
+  const outs = G.out.get(id), ins = G.inc.get(id), mem = G.memberOf.get(id);
+  let html = `<div class="p-head"><span class="badge"><span style="color:#${new THREE.Color(isSol && id === state.activeSolution ? WARM : st.color).getHexString()}">${st.icon}</span>${esc(typeLabel(n.type))}</span><button class="x" data-close aria-label="Close panel">×</button></div>`;
+  if (state.viewResult && !isSol) html += `<button class="back" data-back>‹ Back to ${esc(state.viewResult.view.label)}</button>`;
+  html += `<h2 class="${isSol && id === state.activeSolution ? "sol" : ""}">${esc(n.label)}</h2><p class="desc">${esc(n.description)}</p>`;
+  html += `<dl class="kv"><dt>Domains</dt><dd>${n.domains.map(chip).join("") || "—"}</dd>
+    <dt>Semantic position</dt><dd>${esc(semanticPosition(G, n, POS.get(id)))}</dd>`;
+  if (!isSol) html += `<dt>Used by</dt><dd>${mem.length ? mem.map(s => `<button class="solchip ${s === state.activeSolution ? "active" : ""}" data-sol="${esc(s)}">◆ ${esc(G.nodes.get(s).label)}</button>`).join("") : "—"}
+    ${mem.length > 1 ? `<div class="reuse">One object, ${mem.length} solutions. Nothing is duplicated.</div>` : ""}</dd>`;
+  html += `</dl>`;
+  if (isSol) {
+    const c = G.constellations.get(id), counts = {};
+    c.nodes.forEach(x => { if (x !== id) { const t = G.nodes.get(x).type; counts[t] = (counts[t] || 0) + 1; } });
+    const shared = [...c.nodes].filter(x => G.memberOf.get(x).length > 1).length;
+    const max = Math.max(...Object.values(counts), 1);
+    html += `<div class="sec-t"><span>Constellation</span></div>
+      <div class="big">${c.nodes.size - 1}<small>objects, ${c.edges.length} relationships, ${shared} shared</small></div>
+      <div class="bars" style="margin-top:10px">${Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([t, v]) =>
+        `<span>${styleOf(t).icon} ${esc(typeLabel(t))}</span><span class="bar"><i style="width:${v / max * 100}%"></i></span><span class="v">${v}</span>`).join("")}</div>
+      <div class="sec-t"><span>Generate a document view</span></div>
+      ${G.data.views.map(v => `<button class="viewbtn" data-view="${esc(v.id)}" data-for="${esc(id)}">${esc((v.button || v.label).toUpperCase())}<small>${esc(v.audience)}</small></button>`).join("")}`;
+  }
+  const grpRel = (list, dir) => list.map(e => dir === "out"
+    ? `<div class="rel"><span class="rt">${esc(e.label || e.type)}</span>${nodeLink(e.to)}<span class="nt">${esc(typeLabel(G.nodes.get(e.to).type))}</span></div>`
+    : `<div class="rel">${nodeLink(e.from)}<span class="rt in">${esc(e.label || e.type)}</span><span class="nt">this</span></div>`).join("");
+  if (!isSol || outs.length < 40) {
+    html += `<div class="sec-t"><span>Outgoing relationships</span><span>${outs.length}</span></div>${grpRel(outs, "out") || '<div class="empty">None</div>'}`;
+    html += `<div class="sec-t"><span>Incoming relationships</span><span>${ins.length}</span></div>${grpRel(ins, "in") || '<div class="empty">None</div>'}`;
+  }
+  html += `<div class="sec-t"><span>Metadata</span></div><div class="meta"><span>id</span><span>${esc(n.id)}</span><span>status</span><span>${esc(n.status)}</span><span>source</span><span>${esc(n.source)}</span>${n.step ? `<span>step</span><span>${n.step}</span>` : ""}</div>`;
+  openPanel(html);
+}
+function renderViewPanel() {
+  const vr = state.viewResult, sol = G.nodes.get(vr.solId);
+  const hint = (id, set) => {
+    const rels = G.out.get(id).filter(e => set.has(e.to)).slice(0, 3);
+    return rels.length ? `<span class="hint">${rels.map(e => `<span class="rt">${esc(e.type)}</span> ${esc(G.nodes.get(e.to).label)}`).join("<br>")}</span>` : "";
+  };
+  let html = `<div class="p-head"><span class="badge">Document view · query result</span><button class="x" data-close aria-label="Close panel">×</button></div>
+    <h2>${esc(vr.view.label)}</h2>
+    <p class="desc">For <button class="nl" data-node="${esc(vr.solId)}" style="color:var(--warm)">${esc(sol.label)}</button>. Audience: ${esc(vr.view.audience)}. ${esc(vr.view.purpose || "")}</p>
+    <div class="note">This document is not stored as a separate copy. It is a view over the knowledge model. Change a knowledge object once and every view that references it can use the updated information.</div>`;
+  vr.sections.forEach(s => {
+    html += `<div class="doc-sec" data-sec="${s.index}"><div class="doc-h"><span class="num">${s.index}</span><span class="ti">${esc(s.title)}</span><span class="ct">${s.nodeIds.length}</span></div>
+      <div class="q">${esc(s.query)}</div>
+      ${s.nodeIds.length ? s.nodeIds.map(id => { const n = G.nodes.get(id), st = styleOf(n.type);
+        return `<div class="ref"><span class="ic" style="color:#${new THREE.Color(id === vr.solId ? WARM : st.color).getHexString()}">${st.icon}</span>${nodeLink(id)}${G.memberOf.get(id).length > 1 ? ' <span class="nt" title="Shared by more than one solution">◌</span>' : ""}${hint(id, vr.nodes)}</div>`; }).join("")
+        : `<div class="empty">No objects in this constellation match this section's query yet. Add them to the model and the section fills itself.</div>`}
+    </div>`;
+  });
+  const json = JSON.stringify(Model.payload(G, vr), null, 2);
+  html += `<details class="payload"><summary>Render payload for a future AI writer (JSON)</summary><pre>${esc(json)}</pre></details>
+    <p class="ai">Future step: an AI model receives this payload and writes the narrative. It acts as the writer, not the source of truth; a person reviews before publication. Not implemented in this prototype.</p>
+    <button class="tgl" data-copy>Copy payload</button>`;
+  openPanel(html);
+  $("#right").querySelectorAll(".doc-sec").forEach(el => {
+    const s = vr.sections[+el.dataset.sec - 1];
+    el.addEventListener("mouseenter", () => { state.sectionFocus = s.nodeIds.concat([vr.solId]); computeLevels(); });
+    el.addEventListener("mouseleave", () => { state.sectionFocus = null; computeLevels(); });
+  });
+  const cp = $("#right [data-copy]");
+  cp && cp.addEventListener("click", () => { navigator.clipboard && navigator.clipboard.writeText(json).then(() => cp.textContent = "Copied payload", () => cp.textContent = "Copy failed: select the text above"); });
+}
+function renderReusePanel() {
+  const rows = G.sharedIds.slice().sort((a, b) => G.nodes.get(a).type.localeCompare(G.nodes.get(b).type)).map(id => {
+    const n = G.nodes.get(id), st = styleOf(n.type);
+    return `<div class="ref"><span class="ic" style="color:#${new THREE.Color(st.color).getHexString()}">${st.icon}</span>${nodeLink(id)} <span class="nt">${esc(typeLabel(n.type))}</span>
+      <span class="hint">${G.memberOf.get(id).map(s => esc(G.nodes.get(s).label)).join(" + ")}</span></div>`;
+  }).join("");
+  openPanel(`<div class="p-head"><span class="badge"><span style="color:#e8dcc0">◌</span>Reuse</span><button class="x" data-close aria-label="Close panel">×</button></div>
+    <h2>${G.sharedIds.length} shared objects</h2>
+    <p class="desc">These objects take part in more than one business solution. Each exists once in the model; every solution and every document view points to the same object.</p>
+    ${rows}`);
+}
+function restorePanel() {
+  if (state.showReuse) renderReusePanel();
+  else if (state.viewResult) renderViewPanel();
+  else if (state.activeSolution) renderNodePanel(state.activeSolution);
+  else closePanel();
+}
+
+/* ---------- actions ---------- */
+function focusCamera(id) { camGoal.target = new THREE.Vector3(...POS.get(id)).multiplyScalar(.55); }
+function setSolution(id) {
+  state.activeSolution = id; state.viewResult = null; state.selected = id; state.sectionFocus = null; state.showReuse = false;
+  focusCamera(id); renderNodePanel(id); renderLeft(); computeLevels();
+}
+function selectNode(id, fromScene) {
+  if (isSolution(id)) { setSolution(id); return; }
+  state.selected = id; state.sectionFocus = null; renderNodePanel(id); computeLevels();
+  if (!fromScene) focusCamera(id);
+}
+function showView(viewId, solId) {
+  const sid = solId || state.activeSolution || G.data.meta.primarySolution || G.solutionIds[0];
+  if (!sid) return;
+  state.activeSolution = sid; state.viewResult = Model.runView(G, sid, viewId); state.selected = null; state.sectionFocus = null; state.showReuse = false;
+  camGoal.target = new THREE.Vector3(0, 0, 0);
+  renderViewPanel(); renderLeft(); computeLevels();
+}
+function reset() {
+  Object.assign(state, { activeSolution: null, viewResult: null, selected: null, sectionFocus: null, showReuse: false });
+  state.domains = new Set(G.data.domains.map(d => d.id));
+  camGoal.target = new THREE.Vector3(0, 0, 0);
+  const from = camera.position.clone(), t0 = performance.now();
+  (function fly(now) { const t = Math.min(1, (now - t0) / 900), e = 1 - Math.pow(1 - t, 3); camera.position.lerpVectors(from, CAM_HOME, e); if (t < 1) requestAnimationFrame(fly); })(t0);
+  closePanel(); renderLeft(); computeLevels();
+}
+
+document.addEventListener("click", ev => {
+  const t = ev.target.closest("[data-node],[data-sol],[data-view],[data-close],[data-back]");
+  if (!t) return;
+  if (t.dataset.close != null) { state.selected = null; if (state.showReuse) { state.showReuse = false; renderLeft(); } state.sectionFocus = null; if (state.viewResult) { state.viewResult = null; renderLeft(); } closePanel(); computeLevels(); }
+  else if (t.dataset.back != null) { state.selected = null; renderViewPanel(); computeLevels(); }
+  else if (t.dataset.view) showView(t.dataset.view, t.dataset.for);
+  else if (t.dataset.sol) setSolution(t.dataset.sol);
+  else if (t.dataset.node) selectNode(t.dataset.node, false);
+});
+$("#domList").addEventListener("change", ev => {
+  const d = ev.target.dataset.dom; if (!d) return;
+  ev.target.checked ? state.domains.add(d) : state.domains.delete(d); computeLevels();
+});
+$("#tReuse").addEventListener("click", () => {
+  state.showReuse = !state.showReuse;
+  if (state.showReuse) { state.viewResult = null; state.selected = null; renderReusePanel(); } else restorePanel();
+  renderLeft(); computeLevels();
+});
+$("#tLabels").addEventListener("click", () => { state.labelsAll = !state.labelsAll; renderLeft(); computeLevels(); });
+$("#tRotate").addEventListener("click", () => { state.autoRotate = !state.autoRotate; renderLeft(); });
+$("#tReset").addEventListener("click", reset);
+document.addEventListener("keydown", ev => {
+  if (ev.key !== "Escape") return;
+  if (state.selected && state.viewResult) { state.selected = null; renderViewPanel(); }
+  else if (state.viewResult) { state.viewResult = null; state.selected = state.activeSolution; restorePanel(); renderLeft(); }
+  else if (state.selected && state.selected !== state.activeSolution) { state.selected = state.activeSolution; restorePanel(); }
+  else reset();
+  computeLevels();
+});
+$("#bExport").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(G.data, null, 2)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "knowledge-graph.json"; a.click();
+});
+$("#bImport").addEventListener("click", () => $("#fImport").click());
+$("#fImport").addEventListener("change", ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  f.text().then(txt => { try { loadGraph(JSON.parse(txt)); } catch (e) { alert("Could not load graph JSON: " + e.message + ". Expected { meta, domains, relationshipTypes, nodes, edges, views }."); } });
+  ev.target.value = "";
+});
+window.addEventListener("resize", () => {
+  W = window.innerWidth; Hh = window.innerHeight; camera.aspect = W / Hh; camera.updateProjectionMatrix(); renderer.setSize(W, Hh);
+});
+
+/* ---------- entry point: replaceable graph ---------- */
+function loadGraph(json) {
+  G = Model.build(json); POS = computeLayout(G);
+  Object.assign(state, { activeSolution: null, viewResult: null, selected: null, hovered: null, sectionFocus: null, showReuse: false });
+  state.domains = new Set(G.data.domains.map(d => d.id));
+  Object.entries(cube.faces).forEach(([d, f]) => { f.lbl.textContent = domLabel(d); });
+  buildGraph(); closePanel(); renderLeft(); computeLevels();
+}
+window.SolutionKnowledgeCube = { loadGraph, get model() { return G; }, runView: (sol, view) => Model.runView(G, sol, view) };
+loadGraph(graphData);
+requestAnimationFrame(animate);
+setTimeout(() => { const h = $("#hint"); h.style.transition = "opacity 1.2s"; h.style.opacity = 0; }, 9000);
+</script>
+</body>
+</html>

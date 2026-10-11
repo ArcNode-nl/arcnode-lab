@@ -101,8 +101,13 @@ function validPhaseFields(){
 }
 function renderCube(){
   const root=$('#detail-body');
-  root.innerHTML=`<div id="cube-mount"></div>`;
-  window.ArcNodeCube.mount(root.querySelector('#cube-mount'));
+  root.innerHTML=`<iframe
+    class="knowledge-cube-iframe"
+    src="assets/energielus-cube.html"
+    title="Energielus: interactieve Knowledge Cube"
+    loading="eager"
+    allow="fullscreen"
+  ></iframe>`;
 }
 function renderCocanvas(){
  const video='assets/demo_film3_downloadlijst_wit.webm';

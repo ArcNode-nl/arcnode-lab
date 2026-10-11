@@ -86,3 +86,7 @@
 #detail-view.news-detail-mode #detail-kicker {
     display: none !important;
 }
+
+/* Embed van oorspronkelijke Knowledge Cube: maximaal gebruik van tablethoogte. */
+.knowledge-cube-iframe { display:block; width:100%; height:calc(100dvh - 69px); min-height:440px; border:1px solid #243446; border-radius:10px; background:#040914; }
+@media(max-width:850px){.knowledge-cube-iframe{height:calc(100dvh - 66px);}}
