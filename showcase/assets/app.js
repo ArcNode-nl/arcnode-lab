@@ -25,7 +25,6 @@ function field(key,label,suffix='',step='1'){
 function costRows(rows){return rows.map(([label,value])=>`<div class="cost-line"><span>${label}</span><strong class="focus-num">${euro(value)}</strong></div>`).join('');}
 function stageTitle(meta,title,desc,status){return `<div class="work-title"><div><div class="meta">${meta}</div><h2>${title}</h2><p>${desc}</p></div><span class="status">${status}</span></div>`;}
 function steps(){return `<nav class="steps" aria-label="Productiefasen">${['Offerte','Ordervoorbereiding','Productie','Nacalculatie'].map((name,i)=>`<div class="step ${i===job.phase?'active':''} ${i<job.phase?'completed':''}"><span>${i<job.phase?'✓':i+1}</span>${name}</div>`).join('')}</nav>`;}
-function footer(){return `<div class="product-footer"><span>ARCNODE<b>.</b> / PRODUCTIEFLOW</span><span>Demonstratiebedrijf · fictieve prijzen en gegevens</span></div>`;}
 function quoteUI(){
  const e=estimate();
  return `${stageTitle('OFF-2026-041 / AANVRAAG','Offerte voorbereiden','Fictieve opdracht: 40 metalen montagebeugels. Pas de aantallen of bewerkingstijden aan en bekijk direct de voorcalculatie.','VOORCALCULATIE')}
@@ -69,7 +68,7 @@ function conclusionUI(){
 function renderProduction(){
  const root=$('#detail-body');
  let body=[quoteUI,orderUI,productionUI,conclusionUI][job.phase]();
- root.innerHTML=`<div class="production-frame"><div class="production-top"><strong>WERKSTATION <span style="color:#039ba5">/</span> PRODUCTIE</strong><small>FICTIEF BEDRIJF · MONTAGEBEUGELS MB-40</small><span class="prod-badge">DEMO-OMGEVING</span></div>${steps()}<div class="work-area">${body}</div></div>${footer()}`;
+ root.innerHTML=`<div class="production-frame"><div class="production-top"><strong>WERKSTATION <span style="color:#039ba5">/</span> PRODUCTIE</strong><small>FICTIEF BEDRIJF · MONTAGEBEUGELS MB-40</small><span class="prod-badge">DEMO-OMGEVING</span></div>${steps()}<div class="work-area">${body}</div></div>`;
  root.querySelectorAll('[data-field]').forEach(input=>{
    input.addEventListener('input',()=>{
      const n=Number(input.value),key=input.dataset.field;
@@ -94,7 +93,7 @@ function renderProduction(){
    }else if(a==='edit-actual')job.phase=2;
    else if(a==='reset')job=defaults();
    renderProduction();
-   document.querySelector('.detail-heading')?.scrollIntoView({behavior:'smooth',block:'start'});
+   document.querySelector('#detail-view')?.scrollIntoView({behavior:'smooth',block:'start'});
  }));
 }
 function validPhaseFields(){
@@ -133,6 +132,8 @@ function openCase(id,updateHash=true){
  activeCase=id;
  const [title,kicker,subtitle,idx]=descriptions[id];
  $('#home-view').classList.add('is-hidden');$('#detail-view').classList.remove('is-hidden');$('#detail-view').classList.toggle('news-detail-mode', id==='news');
+ $('.app-root').classList.add('in-detail');
+ $('#detail-view').classList.toggle('compact-detail', id!=='news');
  $('#detail-title').textContent=title;$('#detail-kicker').textContent=idx+' / '+kicker;$('#detail-subtitle').textContent=subtitle;
  if(id==='production')renderProduction();else if(id==='news')renderNews();else if(id==='cube')renderCube();else if(id==='cocanvas')renderCocanvas();
  if(updateHash)history.replaceState(null,'','#'+id);
@@ -141,6 +142,8 @@ function openCase(id,updateHash=true){
 function goHome(updateHash=true){
  window.ArcNodeCube?.destroy();
  activeCase=null;$('#detail-view').classList.add('is-hidden');$('#home-view').classList.remove('is-hidden');
+ $('.app-root').classList.remove('in-detail');
+ $('#detail-view').classList.remove('compact-detail');
  if(updateHash)history.replaceState(null,'',window.location.pathname);
  window.scrollTo(0,0);
 }
