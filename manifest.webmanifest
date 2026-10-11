@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "ArcNode Showcase",
+  "short_name": "ArcNode",
+  "description": "Demonstraties van ArcNode: Knowledge Cube, Productieflow, Nieuws-AI en CoCanvas.",
+  "lang": "nl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#070c13",
+  "theme_color": "#070c13",
+  "icons": [
+    {
+      "src": "assets/pwa-icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/pwa-icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
+  ]
+}
