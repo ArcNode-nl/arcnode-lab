@@ -1,111 +1,866 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#070c13" />
-  <title>ArcNode</title>
-  <link rel="icon" href="assets/arcnode-logo.png" type="image/png" />
-  <link rel="manifest" href="manifest.webmanifest?v=1" />
-  <link rel="apple-touch-icon" href="assets/pwa-icon-192.png" />
-  <link rel="stylesheet" href="assets/app.css?v=15-hide-news-kicker" />
-  <link rel="stylesheet" href="assets/news.css?v=12" />
-  <script defer src="assets/news.js?v=12-hetzner-1"></script>
-  <link rel="stylesheet" href="assets/cube.css?v=12" />
-  <script defer src="assets/cube.js?v=12"></script>
-  <script defer src="assets/app.js?v=14-tablet"></script>
-  <style>
-    /* Minimal landing page: brand and four clear, fully clickable previews. */
-    #home-view { padding-top: 24px; }
-    #home-view .card-information { padding: 12px 18px 14px; display: block; }
-    #home-view .card-information small { display: block; font-size: 10px; }
-    #home-view .card-information h2 { margin: 5px 0 0; font-size: 21px; line-height: 1.15; }
-    @media (max-width: 600px) {
-      #home-view { padding-top: 18px; }
-      #home-view .card-information { padding: 10px 12px 12px; }
-      #home-view .card-information small { font-size: 8px; }
-      #home-view .card-information h2 { font-size: 17px; line-height: 1.2; }
-    }
-  </style>
+    <link rel="icon" type="image/png" href="/flavicon.ico">
+    <link rel="apple-touch-icon" href="/flavicon.ico">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ArcNode / Lab — Experiments, prototypes & unfinished ideas.</title>
+    <meta name="description" content="Experiments, prototypes and unfinished ideas from ArcNode. Not case studies — proof of curiosity.">
+
+    <meta property="og:title" content="ArcNode / Lab">
+    <meta property="og:description" content="Experiments, prototypes and unfinished ideas.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lab.arcnode.nl">
+    <meta property="og:image" content="https://arcnode.nl/flavicon.ico">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    /* Shared with arcnode.nl — do not diverge without updating both sites */
+    --bg: #f8f7f4;
+    --fg: #0e0e0e;
+    --teal: #00b8a9;
+    --teal-light: #e0f7f5;
+    --teal-dark: #007a6e;
+    --muted: #6b6b6b;
+    --border: #e0ddd8;
+    --mono: 'DM Mono', monospace;
+    --serif: 'DM Serif Display', serif;
+    --sans: 'DM Sans', sans-serif;
+
+    /* Lab-only — the dark panel from arcnode.nl's dashboard mock, promoted from decoration to primary surface */
+    --panel: #0d0f12;
+    --panel-head: #13171d;
+    --panel-border: #252b36;
+    --panel-line: #1a1f28;
+    --panel-text: #e2e8f0;
+    --panel-muted: #6b7a95;
+
+    --live: #00b8a9;
+    --active: #f59e0b;
+    --experiment: #60a5fa;
+    --archived: #6b7a95;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  a { color: inherit; }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 3rem;
+    background: rgba(248,247,244,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    text-decoration: none;
+  }
+
+  .nav-logo img { height: 28px; width: 28px; object-fit: contain; align-self: center; }
+
+  .nav-logo-text {
+    font-family: var(--mono);
+    font-size: 1.02rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--fg);
+  }
+  .nav-logo-text span { color: var(--teal); }
+
+  .nav-lab-tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    color: var(--panel-muted);
+    border: 1px solid var(--border);
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+  }
+
+  .nav-right { display: flex; align-items: center; gap: 2rem; }
+
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+
+  .nav-links a, .nav-home {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav-links a:hover, .nav-home:hover { color: var(--teal); }
+
+  .nav-home {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-left: 1px solid var(--border);
+    padding-left: 2rem;
+  }
+
+  /* INTRO — a README header, not a hero */
+  .intro {
+    padding: 6rem 3rem 3.5rem;
+    max-width: 760px;
+  }
+
+  .intro-mark {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    margin-bottom: 0.9rem;
+  }
+  .intro-mark span { color: var(--teal); }
+
+  .intro h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.1rem, 4vw, 3.1rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.1rem;
+  }
+
+  .intro p {
+    color: var(--muted);
+    font-weight: 300;
+    max-width: 540px;
+  }
+
+  .intro p + p { margin-top: 0.8rem; }
+
+  /* LOG — the centerpiece */
+  .log-section { padding: 0 3rem 5rem; font-family: var(--mono); color: var(--panel-text); }
+
+  .log-cols {
+    display: grid;
+    grid-template-columns: 110px 1fr 200px 140px;
+    padding: 0 16px 8px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  .log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .log-block {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .log-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 200px 140px;
+    align-items: center;
+    width: 100%;
+    padding: 14px 16px;
+    border: none;
+    background: none;
+    font-family: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .log-row:hover { background: var(--panel-head); }
+  .log-block.is-open .log-row { border-bottom: 1px solid var(--panel-border); }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .status-dot.hollow { background: transparent; border: 1.5px solid var(--archived); }
+  .status.live .status-dot { background: var(--live); }
+  .status.active .status-dot { background: var(--active); }
+  .status.experiment .status-dot { background: var(--experiment); }
+  .status.archived { color: var(--panel-muted); }
+
+  .log-project {
+    font-size: 13.5px;
+    color: var(--panel-text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .log-project .caret {
+    font-size: 10px;
+    color: var(--panel-muted);
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  .log-row[aria-expanded="true"] .caret { transform: rotate(90deg); }
+
+  .log-area { font-size: 11.5px; color: var(--panel-muted); }
+  .log-updated { font-size: 11px; color: var(--panel-muted); text-align: right; }
+
+  .log-detail {
+    display: none;
+    padding: 4px 16px 20px 40px;
+  }
+  .log-block.is-open .log-detail { display: block; }
+
+  .log-detail p {
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--panel-text);
+    max-width: 560px;
+    margin-bottom: 0.7rem;
+  }
+
+  .log-detail .todo-flag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--active);
+    letter-spacing: 0.02em;
+    margin-bottom: 0.7rem;
+    max-width: 560px;
+  }
+
+  /* PREVIEW — treated as a lab artefact, not marketing imagery. No device mockups. */
+  .preview { margin-bottom: 1.1rem; max-width: 560px; }
+  .preview-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--panel-muted);
+    margin-bottom: 6px;
+  }
+  .preview-box {
+    aspect-ratio: 16 / 10;
+    background: var(--panel-head);
+    border: 1px dashed var(--panel-border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--panel-muted);
+  }
+  .preview-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 3px; }
+
+  .preview-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+  }
+
+  .preview-split { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; align-items: start; }
+  .preview-split .preview-box { aspect-ratio: auto; height: 190px; }
+
+  /* Image left, text right — used for SensorCanvas and ClubScout */
+  .log-columns {
+    display: grid;
+    grid-template-columns: minmax(280px, 55%) 1fr;
+    gap: 1.75rem;
+    align-items: start;
+  }
+  .log-columns .preview { max-width: none; margin-bottom: 0; }
+  .log-columns .log-detail-text p { max-width: none; }
+
+  /* Text pipeline — for experiments with no screenshot yet */
+  .pipeline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    background: var(--panel-head);
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    padding: 1rem;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
+  }
+  .pipeline-step {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    padding: 0.4rem 0.6rem;
+    color: var(--panel-text);
+  }
+  .pipeline-arrow { color: var(--panel-muted); }
+
+  .log-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.9rem; }
+  .log-tag {
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    padding: 0.3rem 0.6rem;
+    background: var(--panel-head);
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    color: var(--panel-muted);
+  }
+
+  .log-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    color: var(--live);
+    text-decoration: none;
+    border-bottom: 1px solid var(--live);
+    padding-bottom: 2px;
+    width: fit-content;
+    transition: opacity 0.15s;
+  }
+  .log-action:hover { opacity: 0.7; }
+
+  /* MMT DEMO — a generic recreation of a review-queue UI, treated as an embedded artefact */
+  .mmt-demo {
+    background: #fbfaf7;
+    border: 1px solid #e2ded5;
+    border-radius: 4px;
+    overflow: hidden;
+    color: #1a1a1a;
+  }
+
+  .mmt-header {
+    background: #1c2b3a;
+    color: #e8ecf1;
+    padding: 0.9rem 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .mmt-brand { display: flex; align-items: baseline; gap: 0.6rem; }
+  .mmt-brand-mark {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    color: #8fa4bd;
+    border: 1px solid #3a4c60;
+    border-radius: 2px;
+    padding: 0.1rem 0.35rem;
+  }
+  .mmt-brand-title { font-family: var(--serif); font-style: italic; font-size: 1.05rem; }
+  .mmt-stats { font-family: var(--mono); font-size: 10px; color: #8fa4bd; }
+  .mmt-stats span { margin-left: 8px; }
+
+  .mmt-toolbar {
+    background: #f2f0ea;
+    border-bottom: 1px solid #e2ded5;
+    padding: 0.55rem 1.1rem;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  .mmt-select {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    color: #4a463d;
+    background: #fff;
+    border: 1px solid #d8d3c8;
+    border-radius: 3px;
+    padding: 0.3rem 0.6rem;
+  }
+  .mmt-run-btn {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #fff;
+    background: #c9963d;
+    border-radius: 3px;
+    padding: 0.3rem 0.7rem;
+  }
+
+  .mmt-cards { padding: 0.9rem 1.1rem; display: flex; flex-direction: column; gap: 0.7rem; }
+
+  .mmt-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid #e9e5db;
+    border-radius: 4px;
+    padding: 0.85rem 1rem;
+  }
+
+  .mmt-badge {
+    position: absolute;
+    top: 0.8rem;
+    right: 1rem;
+    font-family: var(--mono);
+    font-size: 8.5px;
+    letter-spacing: 0.08em;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    border: 1px solid transparent;
+  }
+  .mmt-badge.confirmed { background: #eef3ee; color: #3f6b52; border-color: #cfe0d3; }
+  .mmt-badge.suggested { background: #f2f0ea; color: #7a756b; border-color: #e2ded5; }
+  .mmt-badge.uncertain { background: #faf1df; color: #a3762c; border-color: #ecdcb6; }
+
+  .mmt-title {
+    display: block;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #1a1a1a;
+    text-decoration: none;
+    max-width: 82%;
+    line-height: 1.4;
+    margin-bottom: 0.4rem;
+  }
+  .mmt-title:hover { color: var(--teal-dark); text-decoration: underline; }
+
+  .mmt-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: #8a8578;
+    display: flex;
+    gap: 0.7rem;
+    margin-bottom: 0.5rem;
+  }
+  .mmt-meta strong { color: #4a463d; }
+
+  .log-detail .mmt-reasoning {
+    font-family: var(--sans);
+    font-style: italic;
+    font-size: 12px;
+    color: #4a463d;
+    background: #f6f4ee;
+    border-radius: 3px;
+    padding: 0.5rem 0.65rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .mmt-toggle-original {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: #a3762c;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-bottom: 0.4rem;
+  }
+  .mmt-original {
+    display: none;
+  }
+  .log-detail .mmt-original {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: #4a463d;
+    background: #f6f4ee;
+    border-radius: 3px;
+    padding: 0.5rem 0.65rem;
+    margin-bottom: 0.5rem;
+  }
+  .mmt-card.show-original .mmt-original { display: block; }
+
+  .mmt-source {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 11px;
+    color: #6b6b6b;
+    text-decoration: underline;
+    margin-bottom: 0.6rem;
+  }
+
+  .mmt-actions { display: flex; gap: 0.5rem; }
+  .mmt-btn {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 0.3rem 0.7rem;
+    border-radius: 3px;
+    border: 1px solid #d8d3c8;
+    color: #4a463d;
+  }
+  .mmt-btn.confirm { background: #3f6b52; color: #fff; border-color: #3f6b52; }
+  .mmt-btn.reject { color: #a3453b; border-color: #e0bdb8; }
+
+  @media (max-width: 720px) {
+    .log-cols { display: none; }
+    .log-row { grid-template-columns: 1fr; row-gap: 6px; }
+    .log-detail { padding-left: 16px; }
+    .log-updated { text-align: left; }
+    .preview-split { grid-template-columns: 1fr; }
+    .log-columns { grid-template-columns: 1fr; }
+    .mmt-title { max-width: 100%; }
+  }
+
+  /* ABOUT-THE-LAB STRIP */
+  .about-lab {
+    padding: 4.5rem 3rem;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 3rem;
+  }
+  .about-lab h2 {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    line-height: 1.2;
+  }
+  .about-lab p { color: var(--muted); font-weight: 300; max-width: 520px; }
+  .about-lab p + p { margin-top: 0.8rem; }
+
+  /* STACK — same component as arcnode.nl */
+  .stack {
+    padding: 4.5rem 3rem;
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 2.6fr;
+    gap: 3rem;
+    align-items: start;
+  }
+  .stack-label { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.1em; color: var(--muted); }
+  .stack-items { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .stack-tag {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    padding: 0.45rem 0.9rem;
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--fg);
+    border-radius: 2px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .stack-tag:hover { border-color: var(--teal); color: var(--teal-dark); }
+
+  /* FOOTER */
+  footer {
+    padding: 1.5rem 3rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  footer p, footer a {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  footer a:hover { color: var(--teal); }
+  footer span { color: var(--teal); }
+
+  /* Keyboard focus visibility */
+  a:focus-visible, .log-row:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .nav-home { padding-left: 1rem; }
+    .intro { padding: 4.5rem 1.5rem 2.5rem; }
+    .log-section { padding: 0 1.5rem 3.5rem; }
+    .about-lab, .stack { grid-template-columns: 1fr; gap: 1.2rem; padding: 3rem 1.5rem; }
+    footer { padding: 1.5rem; }
+  }
+</style>
 </head>
 <body>
-  <div class="app-root">
-    <header class="site-header">
-      <button id="brand-home" class="brand-mark" type="button" aria-label="Ga naar ArcNode overzicht">
-        <img src="assets/arcnode-logo.png" alt="Origineel ArcNode beeldmerk" width="50" height="50" />
-        <span class="brand-wordmark">ARCNODE<span class="brand-period">.</span><small>FROM NOISE TO SIGNAL</small></span>
-      </button>
-    </header>
-    <main>
-      <section id="home-view" class="view" aria-label="ArcNode hoofdscherm">
-        <div class="case-grid">
-          <button type="button" class="case-card case-cube" data-case="cube">
-            <div class="card-illustration cube-ill">
-              <svg viewBox="0 0 600 245" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-                <defs><radialGradient id="cube-glow"><stop stop-color="#154964"/><stop offset="1" stop-color="#07111d"/></radialGradient></defs>
-                <rect width="600" height="245" fill="url(#cube-glow)"/>
-                <g transform="translate(0,-1)">
-                  <polygon points="300,21 399,76 300,133 201,76" fill="#1b99b5" fill-opacity=".14" stroke="#4ad8e9" stroke-width="2"/>
-                  <polygon points="201,76 300,133 300,232 201,175" fill="#14779e" fill-opacity=".12" stroke="#35b9d4" stroke-width="2"/>
-                  <polygon points="399,76 300,133 300,232 399,175" fill="#24d0d7" fill-opacity=".12" stroke="#6af4ef" stroke-width="2"/>
-                  <path d="M300 21V133M201 175L300 133 399 175M300 232V133" stroke="#9cfbfa" stroke-width="1.5" stroke-dasharray="5 7" opacity=".32" fill="none"/>
-                  <path d="M251 103L335 103 358 148 293 171 251 103M293 171L325 193" fill="none" stroke="#53d9e3" stroke-opacity=".55" stroke-width="1.3"/>
-                  <g fill="#79f4f6"><circle cx="251" cy="103" r="5"/><circle cx="335" cy="103" r="7"/><circle cx="358" cy="148" r="4"/><circle cx="293" cy="171" r="6"/><circle cx="325" cy="193" r="3"/></g>
-                  <circle cx="300" cy="133" r="11" fill="#112e40" stroke="#abffff" stroke-width="2"/>
-                </g>
-              </svg>
-              
-            </div>
-            <div class="card-information"><div><small>01 / KENNIS</small><h2>Knowledge Cube</h2></div></div>
-          </button>
-          <button type="button" class="case-card case-production" data-case="production">
-            <div class="card-illustration production-ill">
-              <svg viewBox="0 0 600 245" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-                <defs><linearGradient id="flow-path"><stop stop-color="#2e94b3"/><stop offset="1" stop-color="#74eee1"/></linearGradient></defs>
-                <path d="M119 125H481" stroke="url(#flow-path)" stroke-width="3" stroke-dasharray="6 7" opacity=".76" />
-                <g stroke="#4bb9cf" stroke-width="2" fill="#112f43">
-                  <rect x="75" y="76" width="88" height="100" rx="11"/>
-                  <rect x="196" y="76" width="88" height="100" rx="11"/>
-                  <rect x="317" y="76" width="88" height="100" rx="11"/>
-                  <rect x="438" y="76" width="88" height="100" rx="11"/>
-                </g>
-                <g fill="none" stroke="#8ff5f1" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M107 93h20l8 8v25h-28z M127 93v8h8 M113 110h16 M113 118h12"/>
-                  <path d="M220 102l20-10 20 10v24l-20 10-20-10z M220 102l20 10 20-10 M240 112v24"/>
-                  <circle cx="361" cy="113" r="12"/><circle cx="361" cy="113" r="4"/><path d="M361 93v6 M361 127v6 M341 113h6 M375 113h6 M347 99l4 4 M371 123l4 4 M375 99l-4 4 M351 123l-4 4"/>
-                  <path d="M457 129v-17h10v17 M474 129V98h10v31 M491 129v-24h10v24 M454 132h50"/>
-                </g>
-                <g font-size="11" fill="#b9e9f0" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" letter-spacing=".7">
-                  <text x="119" y="158">OFFERTE</text><text x="240" y="158">ORDER</text>
-                  <text x="361" y="158">PRODUCTIE</text><text x="482" y="158">MARGE</text>
-                </g>
-              </svg>
-            </div>
-            <div class="card-information"><div><small>02 / PRODUCTIE</small><h2>Productieflow</h2></div></div>
-          </button>
-          <button type="button" class="case-card case-news" data-case="news">
-            <div class="card-illustration news-ill"><div class="news-pulse"><div class="news-item"><i aria-hidden="true"></i><div><b>Klanten</b><small>Nieuwe ontwikkelingen</small></div><strong>VOLGEN</strong></div><div class="news-item"><i aria-hidden="true"></i><div><b>Concurrenten</b><small>Activiteiten en veranderingen</small></div><strong>MONITOR</strong></div><div class="news-item"><i aria-hidden="true"></i><div><b>Markt</b><small>Trends en kansen</small></div><strong>SIGNALEN</strong></div></div></div>
-            <div class="card-information"><div><small>03 / INTELLIGENCE</small><h2>Nieuws-AI</h2></div></div>
-          </button>
-          <button type="button" class="case-card case-cocanvas" data-case="cocanvas">
-            <div class="card-illustration cocanvas-ill"><div class="schematic">
-              <svg viewBox="0 0 560 245" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-                <rect x="82" y="20" width="396" height="208" rx="3" fill="#102536" stroke="#337d90" stroke-width="2"/>
-                <g fill="none" stroke="#4ec3d4" stroke-width="2.2"><path d="M105 46H454V200H105ZM145 46V200M256 46V200M105 119H454M256 83H454M145 151H256"/></g>
-                <g fill="none" stroke="#39869a" stroke-width="1" stroke-dasharray="4 4"><path d="M97 36H464M97 210H464M70 48V200M487 48V200"/></g>
-                <g fill="#76f6ef"><circle cx="145" cy="119" r="4"/><circle cx="256" cy="83" r="4"/><circle cx="454" cy="119" r="4"/></g>
-                <text x="389" y="65" fill="#7ad9e4" font-size="11">MODEL</text>
-              </svg><span class="video-play">▶</span></div></div>
-            <div class="card-information"><div><small>04 / ENGINEERING</small><h2>CoCanvas</h2></div></div>
-          </button>
-        </div>
-      </section>
-      <section id="detail-view" class="view is-hidden" aria-label="Geselecteerde toepassing">
-        <div class="detail-toolbar"><button id="go-home" class="back-button" type="button">← Terug naar overzicht</button><span id="detail-kicker" class="detail-kicker"></span></div>
-        <div class="detail-heading"><div><h1 id="detail-title"></h1><p id="detail-subtitle"></p></div><div class="detail-tag">ARCNODE / DEMO</div></div>
-        <div id="detail-body"></div>
-      </section>
-    </main>
+
+<nav>
+  <a href="https://arcnode.nl" class="nav-logo">
+    <img src="/arcnode_flavo.png" alt="ArcNode logo">
+    <span class="nav-logo-text">Arc<span>node</span></span>
+    <span class="nav-lab-tag">LAB</span>
+  </a>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#log">Log</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#stack">Stack</a></li>
+    </ul>
+    <a href="https://arcnode.nl" class="nav-home">← arcnode.nl</a>
   </div>
+</nav>
+
+<!-- INTRO -->
+<section class="intro">
+  <p class="intro-mark">ARCNODE <span>/</span> LAB</p>
+  <h1>Experiments, prototypes<br>& unfinished ideas.</h1>
+  <p>I use small working systems to explore technologies, test assumptions and figure out how a problem behaves before deciding what should be built around it.</p>
+  <p>Some become products. Some become client work. Some just teach me something.</p>
+  <p>Not case studies, just proof of curiosity.</p>
+</section>
+
+<!-- LOG -->
+<section class="log-section" id="log">
+  <div class="log-cols">
+    <span>STATUS</span>
+    <span>PROJECT</span>
+    <span>AREA</span>
+    <span style="text-align:right">UPDATED</span>
+  </div>
+
+  <div class="log-list">
+    <div class="log-block">
+      <button class="log-row" aria-expanded="false" onclick="toggleBlock(this)">
+        <span class="status live"><span class="status-dot"></span>LIVE</span>
+        <span class="log-project"><span class="caret">▸</span>SensorCanvas</span>
+        <span class="log-area">IoT / Digital Twin</span>
+        <span class="log-updated">— verify date —</span>
+      </button>
+      <div class="log-detail">
+      <div class="log-columns">
+      <div class="preview">
+        <p class="preview-label">PREVIEW · SENSORCANVAS · LIVE BUILD</p>
+        <img class="preview-img" src="sensor_preview.png" alt="SensorCanvas 3D live sensor dashboard showing temperature, humidity and CO2 by zone">
+      </div>
+      <div class="log-detail-text">
+      <p>A live playground for sensor data and digital twins. SensorCanvas started as an experiment in getting physical sensor data all the way from LoRaWAN devices into something that is actually useful to look at. Data is collected, normalised and presented in a live dashboard that mirrors the system being measured.</p>
+      <p>The interesting part isn't the dashboard itself, but the chain behind it: device → network → data processing → storage → interface.</p>
+      <div class="log-tags">
+        <span class="log-tag">LoRaWAN</span>
+        <span class="log-tag">ChirpStack</span>
+        <span class="log-tag">Node-RED</span>
+        <span class="log-tag">InfluxDB</span>
+        <span class="log-tag">Digital Twin</span>
+      </div>
+      <a class="log-action" href="https://sensorcanvas.arcnode.nl/sensor/" target="_blank" rel="noopener">OPEN LIVE EXPERIMENT ↗</a>
+      </div>
+      </div>
+      </div>
+    </div>
+
+    <div class="log-block">
+      <button class="log-row" aria-expanded="false" onclick="toggleBlock(this)">
+        <span class="status active"><span class="status-dot"></span>ACTIVE</span>
+        <span class="log-project"><span class="caret">▸</span>ClubScout</span>
+        <span class="log-area">Football Data / Automation</span>
+        <span class="log-updated">— verify date —</span>
+      </button>
+      <div class="log-detail">
+      <div class="log-columns">
+      <div class="preview preview-split">
+        <div>
+          <p class="preview-label">PREVIEW · CLUBSCOUT · PLAYER PROFILE</p>
+          <img class="preview-img" src="player.png" alt="ClubScout player profile card">
+        </div>
+        <div>
+          <p class="preview-label">PREVIEW · CLUBSCOUT · TELEGRAM ALERT</p>
+          <img class="preview-img" src="telegram.png" alt="ClubScout Telegram bot notifications about transfer rumours">
+        </div>
+      </div>
+      <div class="log-detail-text">
+      <p>A football scouting tool built around a database of roughly 18,000 players. ClubScout explores what happens when player data, transfer information and automated monitoring are brought into one workflow — clubs can inspect player profiles and receive notifications when something relevant changes.</p>
+      <p>The profile and the Telegram alert belong to the same system: the interface and the automated notification are two views on one pipeline, not two separate tools.</p>
+      <div class="log-tags">
+        <span class="log-tag">Next.js</span>
+        <span class="log-tag">TypeScript</span>
+        <span class="log-tag">PostgreSQL</span>
+        <span class="log-tag">Telegram</span>
+        <span class="log-tag">Data pipelines</span>
+      </div>
+      </div>
+      </div>
+      </div>
+    </div>
+
+    <div class="log-block">
+      <button class="log-row" aria-expanded="false" onclick="toggleBlock(this)">
+        <span class="status experiment"><span class="status-dot"></span>EXPERIMENT</span>
+        <span class="log-project"><span class="caret">▸</span>Multilingual Media Triage</span>
+        <span class="log-area">Local AI / Information Retrieval</span>
+        <span class="log-updated">— verify date —</span>
+      </button>
+      <div class="log-detail">
+      <p class="todo-flag">✎ Derived from a client news-monitoring proof of concept — kept fully generic here, no client name, branding or real data.</p>
+      <div class="preview">
+        <p class="preview-label">PIPELINE · MULTILINGUAL MEDIA TRIAGE</p>
+        <div class="pipeline">
+          <span class="pipeline-step">source article</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">translation</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">classification</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">confidence / reasoning</span><span class="pipeline-arrow">→</span>
+          <span class="pipeline-step">human review</span>
+        </div>
+      </div>
+      <p>An experiment in finding relevant incidents in multilingual news without asking an AI model to invent the underlying facts. The pipeline collects articles across languages, translates the parts needed for review, applies local language models for relevance classification and structured metadata, and presents candidates for human review.</p>
+      <p>The experiment is partly about a boundary: what can safely be automated, and what should remain a human decision?</p>
+
+      <p class="preview-label" style="margin-top:0.4rem;">PREVIEW · GENERIC REVIEW QUEUE · BATTERY &amp; EV SUPPLY CHAIN DEMO</p>
+      <div class="mmt-demo">
+        <div class="mmt-header">
+          <div class="mmt-brand">
+            <span class="mmt-brand-mark">DEMO · v1</span>
+            <span class="mmt-brand-title">Media Review</span>
+          </div>
+          <div class="mmt-stats">5 in queue &nbsp; <span>en 3</span> <span>fr 1</span> <span>sv 1</span></div>
+        </div>
+        <div class="mmt-toolbar">
+          <span class="mmt-select">Last 7 days</span>
+          <span class="mmt-run-btn">Run new scan</span>
+        </div>
+
+        <div class="mmt-cards">
+
+          <article class="mmt-card">
+            <span class="mmt-badge confirmed">CONFIRMED</span>
+            <a class="mmt-title" href="https://www.energy-storage.news/hithium-signs-e400-million-spain-battery-gigafactory-investment-agreement-after-two-year-courtship/" target="_blank" rel="noopener">Hithium signs €400m Spain battery gigafactory deal</a>
+            <div class="mmt-meta"><span>en</span><span>Spain</span><span>2026-04-17</span><span><strong>confidence 8/10</strong></span><span>id: a3f0c1</span></div>
+            <p class="mmt-reasoning">New cell manufacturing capacity announced for Navarre, tied to an existing storage-integration partnership.</p>
+            <a class="mmt-source" href="https://www.energy-storage.news/hithium-signs-e400-million-spain-battery-gigafactory-investment-agreement-after-two-year-courtship/" target="_blank" rel="noopener">Energy-Storage.News</a>
+            <div class="mmt-actions"><span class="mmt-btn confirm">Confirm</span><span class="mmt-btn">Uncertain</span><span class="mmt-btn reject">Reject</span></div>
+          </article>
+
+          <article class="mmt-card">
+            <span class="mmt-badge confirmed">CONFIRMED</span>
+            <a class="mmt-title" href="https://france3-regions.franceinfo.fr/hauts-de-france/nord-0/dunkerque/la-gigafactory-verkor-est-inauguree-pres-de-dunkerque-c-est-le-debut-d-une-nouvelle-ere-industrielle-3265034.html" target="_blank" rel="noopener">Verkor's battery gigafactory opens near Dunkirk</a>
+            <div class="mmt-meta"><span>fr</span><span>France</span><span>2025-12-11</span><span><strong>confidence 9/10</strong></span><span>id: 7c2ee1</span></div>
+            <p class="mmt-reasoning">First cells produced at a new French site, framed locally as a milestone for European battery sovereignty.</p>
+            <a class="mmt-toggle-original">Show original ▾</a>
+            <p class="mmt-original">La gigafactory Verkor est inaugurée près de Dunkerque</p>
+            <a class="mmt-source" href="https://france3-regions.franceinfo.fr/hauts-de-france/nord-0/dunkerque/la-gigafactory-verkor-est-inauguree-pres-de-dunkerque-c-est-le-debut-d-une-nouvelle-ere-industrielle-3265034.html" target="_blank" rel="noopener">France 3 Régions</a>
+            <div class="mmt-actions"><span class="mmt-btn confirm">Confirm</span><span class="mmt-btn">Uncertain</span><span class="mmt-btn reject">Reject</span></div>
+          </article>
+
+          <article class="mmt-card">
+            <span class="mmt-badge suggested">SUGGESTED</span>
+            <a class="mmt-title" href="https://www.automotorsport.se/nyheter/northvolt-kop-klart-lyten-batterifabrik-skelleftea/" target="_blank" rel="noopener">Former Northvolt plant to restart, targeting 600 new hires</a>
+            <div class="mmt-meta"><span>sv</span><span>Sweden</span><span>2026-02-27</span><span><strong>confidence 8/10</strong></span><span>id: 9d41b0</span></div>
+            <p class="mmt-reasoning">Site changes ownership after last year's bankruptcy; production restart planned under the new buyer.</p>
+            <a class="mmt-toggle-original">Show original ▾</a>
+            <p class="mmt-original">Northvolt-fabriken räddas – siktar på 600 nyanställningar</p>
+            <a class="mmt-source" href="https://www.automotorsport.se/nyheter/northvolt-kop-klart-lyten-batterifabrik-skelleftea/" target="_blank" rel="noopener">Automotorsport.se</a>
+            <div class="mmt-actions"><span class="mmt-btn confirm">Confirm</span><span class="mmt-btn">Uncertain</span><span class="mmt-btn reject">Reject</span></div>
+          </article>
+
+          <article class="mmt-card">
+            <span class="mmt-badge uncertain">UNCERTAIN</span>
+            <a class="mmt-title" href="https://balkangreenenergynews.com/protests-in-serbia-against-lithium-mining-to-culminate-in-belgrade-rally/" target="_blank" rel="noopener">Protests in Serbia against lithium mining to culminate in Belgrade rally</a>
+            <div class="mmt-meta"><span>en</span><span>Serbia</span><span>2026-06-05</span><span><strong>confidence 7/10</strong></span><span>id: 2f88ae</span></div>
+            <p class="mmt-reasoning">Renewed opposition to a major European lithium project — relevant upstream, before it reaches any battery factory.</p>
+            <a class="mmt-source" href="https://balkangreenenergynews.com/protests-in-serbia-against-lithium-mining-to-culminate-in-belgrade-rally/" target="_blank" rel="noopener">Balkan Green Energy News</a>
+            <div class="mmt-actions"><span class="mmt-btn confirm">Confirm</span><span class="mmt-btn">Uncertain</span><span class="mmt-btn reject">Reject</span></div>
+          </article>
+
+          <article class="mmt-card">
+            <span class="mmt-badge confirmed">CONFIRMED</span>
+            <a class="mmt-title" href="https://www.euronews.com/business/2026/02/07/stellantis-backed-acc-shelves-plans-to-open-battery-gigafactories-in-italy-and-germany" target="_blank" rel="noopener">Stellantis-backed ACC shelves plans for gigafactories in Italy and Germany</a>
+            <div class="mmt-meta"><span>en</span><span>Italy</span><span>2026-02-07</span><span><strong>confidence 9/10</strong></span><span>id: 5b01c7</span></div>
+            <p class="mmt-reasoning">A previously announced site is being wound down — a useful signal for how many planned gigafactories actually reach production.</p>
+            <a class="mmt-source" href="https://www.euronews.com/business/2026/02/07/stellantis-backed-acc-shelves-plans-to-open-battery-gigafactories-in-italy-and-germany" target="_blank" rel="noopener">Euronews</a>
+            <div class="mmt-actions"><span class="mmt-btn confirm">Confirm</span><span class="mmt-btn">Uncertain</span><span class="mmt-btn reject">Reject</span></div>
+          </article>
+
+        </div>
+      </div>
+      <p class="todo-flag" style="margin-top:0.8rem;">✎ Real articles, real links — the confidence scores, ids and review badges are illustrative, not output from a real model run.</p>
+
+      <div class="log-tags">
+        <span class="log-tag">Python</span>
+        <span class="log-tag">Ollama</span>
+        <span class="log-tag">Local LLMs</span>
+        <span class="log-tag">SQLite</span>
+        <span class="log-tag">Multilingual NLP</span>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT THE LAB -->
+<section class="about-lab" id="about">
+  <h2>Why a Lab</h2>
+  <div>
+    <p>Building a small working version is often the fastest way to understand a problem.</p>
+    <p>The Lab is where I can test an integration, architecture or product idea before knowing whether it deserves to become something larger. That might lead to a product, become useful in client work, or simply leave behind a technical pattern worth reusing.</p>
+    <p>The point isn't to make every experiment succeed. It's to learn something concrete by making it work.</p>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="stack" id="stack">
+  <p class="stack-label">Stack</p>
+  <div class="stack-items">
+    <span class="stack-tag">OpenEMS</span>
+    <span class="stack-tag">LoRaWAN</span>
+    <span class="stack-tag">ChirpStack</span>
+    <span class="stack-tag">Node-RED</span>
+    <span class="stack-tag">PostgreSQL</span>
+    <span class="stack-tag">InfluxDB</span>
+    <span class="stack-tag">DuckDB</span>
+    <span class="stack-tag">Grafana</span>
+    <span class="stack-tag">Loxone</span>
+    <span class="stack-tag">Supabase</span>
+    <span class="stack-tag">REST APIs</span>
+    <span class="stack-tag">Digital Twins</span>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 <span>Arcnode</span> Lab</p>
+  <a href="mailto:info@arcnode.nl">info@arcnode.nl</a>
+  <a href="https://arcnode.nl">arcnode.nl</a>
+</footer>
+
+<script>
+  function toggleBlock(btn) {
+    const block = btn.closest('.log-block');
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    document.querySelectorAll('.log-row').forEach(r => r.setAttribute('aria-expanded', 'false'));
+    document.querySelectorAll('.log-block').forEach(b => b.classList.remove('is-open'));
+    if (!expanded) {
+      btn.setAttribute('aria-expanded', 'true');
+      block.classList.add('is-open');
+    }
+  }
+  document.querySelectorAll('.log-row').forEach(row => {
+    row.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleBlock(row); }
+    });
+  });
+
+  // Demo review queue — "Show original" reveal (visual only, no live pipeline behind it)
+  document.querySelectorAll('.mmt-toggle-original').forEach(t => {
+    t.addEventListener('click', () => t.closest('.mmt-card').classList.toggle('show-original'));
+  });
+</script>
+
 </body>
 </html>
