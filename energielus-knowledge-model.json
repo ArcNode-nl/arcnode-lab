@@ -1,0 +1,1363 @@
+{
+  "meta": {
+    "title": "Energielus — zes bedrijfsdimensies",
+    "version": "ArcNode-showcase",
+    "primarySolution": "ems",
+    "solutionType": "BusinessSolution",
+    "contextTypes": [
+      "Organization",
+      "BusinessValue",
+      "SalesObject"
+    ],
+    "nonExpandingRelations": [],
+    "nodeTypes": {
+      "Organization": "Organisatie",
+      "BusinessSolution": "Oplossing",
+      "BusinessValue": "Bedrijfswaarde",
+      "SalesObject": "Commercieel object",
+      "Product": "Product of dienst",
+      "DeliveryActivity": "Uitvoering",
+      "DataConcept": "Dataconcept",
+      "Capability": "Softwarefunctie",
+      "Integration": "API / Integratie",
+      "Infrastructure": "Softwareplatform"
+    },
+    "disclaimer": "Alle getoonde organisaties, systemen, relaties en gegevens zijn fictief en dienen uitsluitend als demonstratie."
+  },
+  "domains": [
+    {
+      "id": "BUSINESS",
+      "label": "Business",
+      "description": "Bedrijfsmodel, partners en doelen"
+    },
+    {
+      "id": "SALES",
+      "label": "Sales",
+      "description": "Klanten, offertes, contracten en CRM"
+    },
+    {
+      "id": "PRODUCT",
+      "label": "Producten",
+      "description": "Slimme energieproducten en diensten"
+    },
+    {
+      "id": "OPERATIONS",
+      "label": "Operations",
+      "description": "Installatie, planning en service"
+    },
+    {
+      "id": "DATA",
+      "label": "Data",
+      "description": "Meetwaarden, prijzen en voorkeuren"
+    },
+    {
+      "id": "DEVELOPMENT",
+      "label": "Development",
+      "description": "API’s, software, monitoring en regels"
+    }
+  ],
+  "relationshipTypes": [
+    {
+      "id": "APPLIES_TO",
+      "description": "applies to"
+    },
+    {
+      "id": "CONSTRAINS",
+      "description": "constrains"
+    },
+    {
+      "id": "CONSUMES",
+      "description": "consumes"
+    },
+    {
+      "id": "CONTRACTS_WITH",
+      "description": "contracts with"
+    },
+    {
+      "id": "CONTROLS",
+      "description": "controls"
+    },
+    {
+      "id": "DELIVERED_BY",
+      "description": "delivered by"
+    },
+    {
+      "id": "DELIVERS_VALUE",
+      "description": "delivers value"
+    },
+    {
+      "id": "DEPENDS_ON",
+      "description": "depends on"
+    },
+    {
+      "id": "ENABLES",
+      "description": "enables"
+    },
+    {
+      "id": "INCLUDES",
+      "description": "includes"
+    },
+    {
+      "id": "INTEGRATES_WITH",
+      "description": "integrates with"
+    },
+    {
+      "id": "MANAGES",
+      "description": "manages"
+    },
+    {
+      "id": "MONITORS",
+      "description": "monitors"
+    },
+    {
+      "id": "OFFERS",
+      "description": "offers"
+    },
+    {
+      "id": "PARTNERS_WITH",
+      "description": "partners with"
+    },
+    {
+      "id": "PART_OF",
+      "description": "part of"
+    },
+    {
+      "id": "PRODUCES",
+      "description": "produces"
+    },
+    {
+      "id": "RECORDED_AS",
+      "description": "recorded as"
+    },
+    {
+      "id": "REPRESENTS",
+      "description": "represents"
+    },
+    {
+      "id": "REQUIRES",
+      "description": "requires"
+    },
+    {
+      "id": "SCHEDULES",
+      "description": "schedules"
+    },
+    {
+      "id": "SERVES",
+      "description": "serves"
+    },
+    {
+      "id": "SOURCED_FROM",
+      "description": "sourced from"
+    },
+    {
+      "id": "SUPPORTED_BY",
+      "description": "supported by"
+    },
+    {
+      "id": "USES",
+      "description": "uses"
+    },
+    {
+      "id": "VALIDATED_BY",
+      "description": "validated by"
+    },
+    {
+      "id": "VALIDATES",
+      "description": "validates"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "energy",
+      "label": "Energielus",
+      "type": "Organization",
+      "domains": [
+        "BUSINESS"
+      ],
+      "description": "Fictieve aanbieder van slimme energieoplossingen voor woningen. Verbindt klant, partners en digitale diensten.",
+      "status": "Illustratief",
+      "source": "Fictief bedrijfsprofiel"
+    },
+    {
+      "id": "manufacturer",
+      "label": "Batterijfabrikant",
+      "type": "Organization",
+      "domains": [
+        "BUSINESS"
+      ],
+      "description": "Externe leverancier van batterijhardware, firmware en technische productdocumentatie.",
+      "status": "Illustratief",
+      "source": "Fictieve leveranciersafspraak"
+    },
+    {
+      "id": "installer_partner",
+      "label": "Installatiepartner",
+      "type": "Organization",
+      "domains": [
+        "BUSINESS"
+      ],
+      "description": "Regionale partij die apparaten plaatst en veilig in bedrijf stelt bij klanten.",
+      "status": "Illustratief",
+      "source": "Fictief partnercontract"
+    },
+    {
+      "id": "utility",
+      "label": "Energieleverancier",
+      "type": "Organization",
+      "domains": [
+        "BUSINESS"
+      ],
+      "description": "Partner voor dynamische elektriciteitscontracten en de commerciële afhandeling ervan.",
+      "status": "Illustratief",
+      "source": "Fictief energiepartnercontract"
+    },
+    {
+      "id": "promise",
+      "label": "Servicebelofte",
+      "type": "BusinessValue",
+      "domains": [
+        "BUSINESS"
+      ],
+      "description": "Klanten krijgen inzicht in hun energieverbruik en ondersteuning bij storingen.",
+      "status": "Illustratief",
+      "source": "Fictieve klantpropositie"
+    },
+    {
+      "id": "revenue",
+      "label": "Verdienmodel",
+      "type": "BusinessValue",
+      "domains": [
+        "BUSINESS"
+      ],
+      "description": "Marge op apparatuur, installatie en optionele doorlopende dienstverlening.",
+      "status": "Illustratief",
+      "source": "Fictieve businesscase"
+    },
+    {
+      "id": "saving",
+      "label": "Klantbesparing",
+      "type": "BusinessValue",
+      "domains": [
+        "BUSINESS",
+        "DATA"
+      ],
+      "description": "Beoogde kostenoptimalisatie op basis van verbruik, marktprijzen en beschikbare apparaten; uitkomst is situatieafhankelijk.",
+      "status": "Illustratief",
+      "source": "Fictieve waardecase"
+    },
+    {
+      "id": "customer",
+      "label": "Huishouden",
+      "type": "SalesObject",
+      "domains": [
+        "SALES"
+      ],
+      "description": "Klant met een verbruiksprofiel, wooninstallatie en individuele energiebehoefte.",
+      "status": "Illustratief",
+      "source": "Fictief CRM-profiel"
+    },
+    {
+      "id": "lead",
+      "label": "Nieuwe lead",
+      "type": "SalesObject",
+      "domains": [
+        "SALES"
+      ],
+      "description": "Aanvraag van iemand die wil weten of een thuisbatterij of laadpunt geschikt is.",
+      "status": "Illustratief",
+      "source": "Fictieve websiteaanvraag"
+    },
+    {
+      "id": "advice",
+      "label": "Energieadvies",
+      "type": "SalesObject",
+      "domains": [
+        "SALES"
+      ],
+      "description": "Advies op basis van verbruik, zonnepanelen, laadbehoefte en investeringsdoelen.",
+      "status": "Illustratief",
+      "source": "Fictief adviesrapport"
+    },
+    {
+      "id": "offer",
+      "label": "Offerte",
+      "type": "SalesObject",
+      "domains": [
+        "SALES",
+        "BUSINESS"
+      ],
+      "description": "Voorstel met producten, installatie, prijs en aannames over de situatie van de klant.",
+      "status": "Illustratief",
+      "source": "Fictieve verkoopofferte"
+    },
+    {
+      "id": "contract",
+      "label": "Klantcontract",
+      "type": "SalesObject",
+      "domains": [
+        "SALES"
+      ],
+      "description": "Vastgelegde afspraken over levering, dienstverlening, rechten en verplichtingen.",
+      "status": "Illustratief",
+      "source": "Fictieve overeenkomst"
+    },
+    {
+      "id": "crm",
+      "label": "CRM-dossier",
+      "type": "SalesObject",
+      "domains": [
+        "SALES",
+        "DATA"
+      ],
+      "description": "Commerciële bron voor leads, klantcontact, offertes, contractstatus en vervolgacties.",
+      "status": "Illustratief",
+      "source": "Fictief CRM-systeem"
+    },
+    {
+      "id": "battery",
+      "label": "Thuisbatterij",
+      "type": "Product",
+      "domains": [
+        "PRODUCT"
+      ],
+      "description": "Slaat elektriciteit tijdelijk op en kan laden of ontladen binnen de afgesproken instellingen.",
+      "status": "Illustratief",
+      "source": "Fictief productblad"
+    },
+    {
+      "id": "solar",
+      "label": "Zonnepanelen",
+      "type": "Product",
+      "domains": [
+        "PRODUCT"
+      ],
+      "description": "Zetten zonlicht om in elektriciteit; opbrengst varieert met licht en installatie.",
+      "status": "Illustratief",
+      "source": "Fictieve productspecificatie"
+    },
+    {
+      "id": "charger",
+      "label": "Slim laadpunt",
+      "type": "Product",
+      "domains": [
+        "PRODUCT"
+      ],
+      "description": "Laadt een elektrische auto en kan het laadvermogen aanpassen op basis van beschikbare informatie.",
+      "status": "Illustratief",
+      "source": "Fictief productblad"
+    },
+    {
+      "id": "dynamic",
+      "label": "Dynamisch tarief",
+      "type": "Product",
+      "domains": [
+        "PRODUCT",
+        "SALES"
+      ],
+      "description": "Contractvorm waarin de elektriciteitsprijs gedurende de tijd varieert.",
+      "status": "Illustratief",
+      "source": "Fictief tariefdocument"
+    },
+    {
+      "id": "app",
+      "label": "Energie-app",
+      "type": "Product",
+      "domains": [
+        "PRODUCT",
+        "DEVELOPMENT"
+      ],
+      "description": "Klantinterface met inzicht in verbruik, opbrengst, status en instellingen.",
+      "status": "Illustratief",
+      "source": "Fictief UX-ontwerp"
+    },
+    {
+      "id": "ems",
+      "label": "Slim energiebeheer",
+      "type": "BusinessSolution",
+      "domains": [
+        "PRODUCT",
+        "DEVELOPMENT"
+      ],
+      "description": "Coördineert het laden en ontladen van batterij en laadpunt volgens ingestelde regels.",
+      "status": "Illustratief",
+      "source": "Fictieve functionele beschrijving"
+    },
+    {
+      "id": "service",
+      "label": "Installatie & service",
+      "type": "BusinessSolution",
+      "domains": [
+        "PRODUCT",
+        "OPERATIONS"
+      ],
+      "description": "Aanvullende service voor monitoring, ondersteuning en periodieke controle.",
+      "status": "Illustratief",
+      "source": "Fictieve dienstverlening"
+    },
+    {
+      "id": "planning",
+      "label": "Installatieplanning",
+      "type": "DeliveryActivity",
+      "domains": [
+        "OPERATIONS"
+      ],
+      "description": "Stemmen van beschikbaarheid van materiaal, monteurs en afspraak met de klant.",
+      "status": "Illustratief",
+      "source": "Fictief planningssysteem"
+    },
+    {
+      "id": "install_order",
+      "label": "Installatieorder",
+      "type": "DeliveryActivity",
+      "domains": [
+        "OPERATIONS"
+      ],
+      "description": "Uitvoerbare opdracht met locatie, geselecteerde producten, planning en instructies.",
+      "status": "Illustratief",
+      "source": "Fictieve werkbon"
+    },
+    {
+      "id": "commission",
+      "label": "Inbedrijfstelling",
+      "type": "DeliveryActivity",
+      "domains": [
+        "OPERATIONS",
+        "DEVELOPMENT"
+      ],
+      "description": "Controle of de installatie is aangesloten, geregistreerd en correct communiceert.",
+      "status": "Illustratief",
+      "source": "Fictief opleverprotocol"
+    },
+    {
+      "id": "ticket",
+      "label": "Serviceticket",
+      "type": "DeliveryActivity",
+      "domains": [
+        "OPERATIONS"
+      ],
+      "description": "Melding met symptomen, status, klantimpact en opvolgactie.",
+      "status": "Illustratief",
+      "source": "Fictieve servicedesk"
+    },
+    {
+      "id": "technician",
+      "label": "Monteur",
+      "type": "DeliveryActivity",
+      "domains": [
+        "OPERATIONS"
+      ],
+      "description": "Voert installatie, inspectie en eventuele reparaties uit.",
+      "status": "Illustratief",
+      "source": "Fictieve rolbeschrijving"
+    },
+    {
+      "id": "diagnosis",
+      "label": "Diagnose op afstand",
+      "type": "DeliveryActivity",
+      "domains": [
+        "OPERATIONS"
+      ],
+      "description": "Analyse van actuele status en foutmeldingen voordat fysieke inzet nodig is.",
+      "status": "Illustratief",
+      "source": "Fictief serviceproces"
+    },
+    {
+      "id": "prices",
+      "label": "Marktprijsreeks",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Tijdgebonden prijsinformatie die de besturing kan gebruiken voor kostenafweging.",
+      "status": "Illustratief",
+      "source": "Fictieve marktdatafeed"
+    },
+    {
+      "id": "meter",
+      "label": "Slimme-meterdata",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Meetwaarden van afname en eventuele teruglevering in de woning.",
+      "status": "Illustratief",
+      "source": "Fictieve meetkoppeling"
+    },
+    {
+      "id": "pvdata",
+      "label": "Zonproductie",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Opbrengstgegevens van de zonnepanelen, gebruikt voor inzicht en prognoses.",
+      "status": "Illustratief",
+      "source": "Fictieve omvormerfeed"
+    },
+    {
+      "id": "soc",
+      "label": "Batterijlading",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Actuele laadstatus en relevante grenzen van de thuisbatterij.",
+      "status": "Illustratief",
+      "source": "Fictief apparaatbericht"
+    },
+    {
+      "id": "sessions",
+      "label": "Laadsessies",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Momenten, vermogen en energiehoeveelheden van elektrisch laden.",
+      "status": "Illustratief",
+      "source": "Fictief laadlogboek"
+    },
+    {
+      "id": "weather",
+      "label": "Weerprognose",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Verwachte zoninstraling en weersinvloeden als input voor energieprognoses.",
+      "status": "Illustratief",
+      "source": "Fictieve externe gegevensbron"
+    },
+    {
+      "id": "prefs",
+      "label": "Klantvoorkeuren",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Toestemming, minimale batterijreserve en voorkeuren voor laden en gebruik.",
+      "status": "Illustratief",
+      "source": "Fictieve app-instellingen"
+    },
+    {
+      "id": "grid",
+      "label": "Netsignalen",
+      "type": "DataConcept",
+      "domains": [
+        "DATA"
+      ],
+      "description": "Informatie over netbeperkingen of beschikbaar vermogen, voor zover betrouwbaar en toegankelijk.",
+      "status": "Illustratief",
+      "source": "Fictieve netinformatiebron"
+    },
+    {
+      "id": "optim",
+      "label": "Optimalisatie-engine",
+      "type": "Capability",
+      "domains": [
+        "DEVELOPMENT",
+        "DATA"
+      ],
+      "description": "Berekent een gewenst laad- en ontlaadplan uit prijzen, prognoses en grenzen.",
+      "status": "Illustratief",
+      "source": "Fictief algoritmeontwerp"
+    },
+    {
+      "id": "battery_api",
+      "label": "Batterij-API",
+      "type": "Integration",
+      "domains": [
+        "DEVELOPMENT"
+      ],
+      "description": "Software-interface om batterijstatus uit te lezen en toegestane opdrachten te geven.",
+      "status": "Illustratief",
+      "source": "Fictieve API-specificatie"
+    },
+    {
+      "id": "charger_api",
+      "label": "Laadpunt-API",
+      "type": "Integration",
+      "domains": [
+        "DEVELOPMENT"
+      ],
+      "description": "Software-interface voor laadstatus, sessies en toegestane vermogensaanpassing.",
+      "status": "Illustratief",
+      "source": "Fictieve API-specificatie"
+    },
+    {
+      "id": "pipeline",
+      "label": "Datapijplijn",
+      "type": "Infrastructure",
+      "domains": [
+        "DEVELOPMENT",
+        "DATA"
+      ],
+      "description": "Verzamelt, controleert en verrijkt meetdata voor applicaties en besturing.",
+      "status": "Illustratief",
+      "source": "Fictief technisch ontwerp"
+    },
+    {
+      "id": "portal",
+      "label": "Klantportaal",
+      "type": "Infrastructure",
+      "domains": [
+        "DEVELOPMENT"
+      ],
+      "description": "Softwarelaag achter inzicht, instellingen en gebruikersinteractie in de energie-app.",
+      "status": "Illustratief",
+      "source": "Fictieve applicatiearchitectuur"
+    },
+    {
+      "id": "crm_api",
+      "label": "CRM-koppeling",
+      "type": "Integration",
+      "domains": [
+        "DEVELOPMENT"
+      ],
+      "description": "Synchroniseert relevante klant- en contractgegevens met operationele systemen.",
+      "status": "Illustratief",
+      "source": "Fictief interfacecontract"
+    },
+    {
+      "id": "monitor",
+      "label": "Systeemmonitoring",
+      "type": "Capability",
+      "domains": [
+        "DEVELOPMENT",
+        "OPERATIONS"
+      ],
+      "description": "Signaleert communicatiestoringen en afwijkende apparaatstatus.",
+      "status": "Illustratief",
+      "source": "Fictief monitoringontwerp"
+    },
+    {
+      "id": "rules",
+      "label": "Regelengine",
+      "type": "Capability",
+      "domains": [
+        "DEVELOPMENT"
+      ],
+      "description": "Bewaakt operationele en klantgebonden randvoorwaarden voordat opdrachten worden verstuurd.",
+      "status": "Illustratief",
+      "source": "Fictieve regelset"
+    }
+  ],
+  "edges": [
+    {
+      "from": "energy",
+      "type": "SOURCED_FROM",
+      "label": "koopt hardware bij",
+      "to": "manufacturer"
+    },
+    {
+      "from": "energy",
+      "type": "PARTNERS_WITH",
+      "label": "werkt samen met",
+      "to": "installer_partner"
+    },
+    {
+      "from": "energy",
+      "type": "PARTNERS_WITH",
+      "label": "heeft partnerafspraak met",
+      "to": "utility"
+    },
+    {
+      "from": "energy",
+      "type": "DELIVERS_VALUE",
+      "label": "realiseert",
+      "to": "revenue"
+    },
+    {
+      "from": "energy",
+      "type": "DELIVERS_VALUE",
+      "label": "belooft",
+      "to": "promise"
+    },
+    {
+      "from": "energy",
+      "type": "DELIVERS_VALUE",
+      "label": "streeft naar",
+      "to": "saving"
+    },
+    {
+      "from": "energy",
+      "type": "OFFERS",
+      "label": "biedt aan",
+      "to": "ems"
+    },
+    {
+      "from": "energy",
+      "type": "OFFERS",
+      "label": "verkoopt",
+      "to": "battery"
+    },
+    {
+      "from": "energy",
+      "type": "OFFERS",
+      "label": "verkoopt",
+      "to": "charger"
+    },
+    {
+      "from": "energy",
+      "type": "OFFERS",
+      "label": "biedt aan",
+      "to": "service"
+    },
+    {
+      "from": "customer",
+      "type": "PRODUCES",
+      "label": "dient in",
+      "to": "lead"
+    },
+    {
+      "from": "lead",
+      "type": "RECORDED_AS",
+      "label": "wordt geregistreerd in",
+      "to": "crm"
+    },
+    {
+      "from": "lead",
+      "type": "ENABLES",
+      "label": "leidt tot",
+      "to": "advice"
+    },
+    {
+      "from": "customer",
+      "type": "CONSUMES",
+      "label": "ontvangt",
+      "to": "advice"
+    },
+    {
+      "from": "advice",
+      "type": "USES",
+      "label": "gebruikt",
+      "to": "meter"
+    },
+    {
+      "from": "advice",
+      "type": "USES",
+      "label": "beoordeelt",
+      "to": "solar"
+    },
+    {
+      "from": "advice",
+      "type": "USES",
+      "label": "beoordeelt",
+      "to": "charger"
+    },
+    {
+      "from": "advice",
+      "type": "USES",
+      "label": "beoordeelt",
+      "to": "battery"
+    },
+    {
+      "from": "advice",
+      "type": "ENABLES",
+      "label": "onderbouwt",
+      "to": "offer"
+    },
+    {
+      "from": "offer",
+      "type": "INCLUDES",
+      "label": "bevat eventueel",
+      "to": "battery"
+    },
+    {
+      "from": "offer",
+      "type": "INCLUDES",
+      "label": "bevat eventueel",
+      "to": "charger"
+    },
+    {
+      "from": "offer",
+      "type": "REQUIRES",
+      "label": "vraagt capaciteitscheck van",
+      "to": "planning"
+    },
+    {
+      "from": "offer",
+      "type": "ENABLES",
+      "label": "kan worden vastgelegd als",
+      "to": "contract"
+    },
+    {
+      "from": "contract",
+      "type": "CONTRACTS_WITH",
+      "label": "bindt",
+      "to": "customer"
+    },
+    {
+      "from": "contract",
+      "type": "INCLUDES",
+      "label": "kan omvatten",
+      "to": "service"
+    },
+    {
+      "from": "contract",
+      "type": "INCLUDES",
+      "label": "kan combineren met",
+      "to": "dynamic"
+    },
+    {
+      "from": "crm",
+      "type": "MANAGES",
+      "label": "beheert",
+      "to": "offer"
+    },
+    {
+      "from": "crm",
+      "type": "MANAGES",
+      "label": "beheert",
+      "to": "contract"
+    },
+    {
+      "from": "crm_api",
+      "type": "INTEGRATES_WITH",
+      "label": "wisselt gegevens uit met",
+      "to": "crm"
+    },
+    {
+      "from": "crm_api",
+      "type": "PRODUCES",
+      "label": "levert gegevens aan",
+      "to": "install_order"
+    },
+    {
+      "from": "manufacturer",
+      "type": "PRODUCES",
+      "label": "levert",
+      "to": "battery"
+    },
+    {
+      "from": "installer_partner",
+      "type": "USES",
+      "label": "zet in",
+      "to": "technician"
+    },
+    {
+      "from": "utility",
+      "type": "OFFERS",
+      "label": "biedt aan",
+      "to": "dynamic"
+    },
+    {
+      "from": "battery",
+      "type": "PRODUCES",
+      "label": "meldt",
+      "to": "soc"
+    },
+    {
+      "from": "solar",
+      "type": "PRODUCES",
+      "label": "produceert",
+      "to": "pvdata"
+    },
+    {
+      "from": "charger",
+      "type": "RECORDED_AS",
+      "label": "registreert",
+      "to": "sessions"
+    },
+    {
+      "from": "app",
+      "type": "CONSUMES",
+      "label": "ontvangt",
+      "to": "prefs"
+    },
+    {
+      "from": "app",
+      "type": "USES",
+      "label": "gebruikt",
+      "to": "portal"
+    },
+    {
+      "from": "app",
+      "type": "REPRESENTS",
+      "label": "toont",
+      "to": "meter"
+    },
+    {
+      "from": "app",
+      "type": "REPRESENTS",
+      "label": "toont",
+      "to": "soc"
+    },
+    {
+      "from": "app",
+      "type": "REPRESENTS",
+      "label": "toont",
+      "to": "sessions"
+    },
+    {
+      "from": "dynamic",
+      "type": "DEPENDS_ON",
+      "label": "is gerelateerd aan",
+      "to": "prices"
+    },
+    {
+      "from": "ems",
+      "type": "USES",
+      "label": "maakt gebruik van",
+      "to": "optim"
+    },
+    {
+      "from": "ems",
+      "type": "CONSTRAINS",
+      "label": "laat beperken door",
+      "to": "rules"
+    },
+    {
+      "from": "ems",
+      "type": "CONTROLS",
+      "label": "stuurt binnen grenzen",
+      "to": "battery"
+    },
+    {
+      "from": "ems",
+      "type": "CONTROLS",
+      "label": "stuurt binnen grenzen",
+      "to": "charger"
+    },
+    {
+      "from": "saving",
+      "type": "SUPPORTED_BY",
+      "label": "kan ondersteund worden door",
+      "to": "ems"
+    },
+    {
+      "from": "revenue",
+      "type": "INCLUDES",
+      "label": "bevat inkomsten uit",
+      "to": "service"
+    },
+    {
+      "from": "promise",
+      "type": "DELIVERED_BY",
+      "label": "wordt ingevuld door",
+      "to": "service"
+    },
+    {
+      "from": "promise",
+      "type": "SUPPORTED_BY",
+      "label": "wordt ondersteund door",
+      "to": "monitor"
+    },
+    {
+      "from": "planning",
+      "type": "SCHEDULES",
+      "label": "plant in",
+      "to": "install_order"
+    },
+    {
+      "from": "install_order",
+      "type": "APPLIES_TO",
+      "label": "vindt plaats bij",
+      "to": "customer"
+    },
+    {
+      "from": "install_order",
+      "type": "INCLUDES",
+      "label": "omvat apparaat",
+      "to": "battery"
+    },
+    {
+      "from": "install_order",
+      "type": "INCLUDES",
+      "label": "kan omvatten",
+      "to": "charger"
+    },
+    {
+      "from": "install_order",
+      "type": "DELIVERED_BY",
+      "label": "wordt uitgevoerd door",
+      "to": "technician"
+    },
+    {
+      "from": "install_order",
+      "type": "ENABLES",
+      "label": "wordt afgesloten met",
+      "to": "commission"
+    },
+    {
+      "from": "commission",
+      "type": "VALIDATES",
+      "label": "controleert verbinding met",
+      "to": "battery_api"
+    },
+    {
+      "from": "commission",
+      "type": "VALIDATES",
+      "label": "controleert verbinding met",
+      "to": "charger_api"
+    },
+    {
+      "from": "commission",
+      "type": "RECORDED_AS",
+      "label": "registreert status in",
+      "to": "monitor"
+    },
+    {
+      "from": "ticket",
+      "type": "APPLIES_TO",
+      "label": "heeft betrekking op",
+      "to": "customer"
+    },
+    {
+      "from": "ticket",
+      "type": "USES",
+      "label": "start met",
+      "to": "diagnosis"
+    },
+    {
+      "from": "ticket",
+      "type": "DELIVERED_BY",
+      "label": "kan worden toegewezen aan",
+      "to": "technician"
+    },
+    {
+      "from": "diagnosis",
+      "type": "USES",
+      "label": "gebruikt",
+      "to": "monitor"
+    },
+    {
+      "from": "diagnosis",
+      "type": "INTEGRATES_WITH",
+      "label": "kan uitlezen via",
+      "to": "battery_api"
+    },
+    {
+      "from": "diagnosis",
+      "type": "INTEGRATES_WITH",
+      "label": "kan uitlezen via",
+      "to": "charger_api"
+    },
+    {
+      "from": "service",
+      "type": "INCLUDES",
+      "label": "omvat afhandeling van",
+      "to": "ticket"
+    },
+    {
+      "from": "service",
+      "type": "INCLUDES",
+      "label": "omvat",
+      "to": "diagnosis"
+    },
+    {
+      "from": "prices",
+      "type": "PRODUCES",
+      "label": "voedt",
+      "to": "optim"
+    },
+    {
+      "from": "meter",
+      "type": "CONSUMES",
+      "label": "wordt verwerkt door",
+      "to": "pipeline"
+    },
+    {
+      "from": "pvdata",
+      "type": "CONSUMES",
+      "label": "wordt verwerkt door",
+      "to": "pipeline"
+    },
+    {
+      "from": "soc",
+      "type": "INTEGRATES_WITH",
+      "label": "wordt ontsloten via",
+      "to": "battery_api"
+    },
+    {
+      "from": "sessions",
+      "type": "INTEGRATES_WITH",
+      "label": "wordt ontsloten via",
+      "to": "charger_api"
+    },
+    {
+      "from": "weather",
+      "type": "PRODUCES",
+      "label": "voedt",
+      "to": "optim"
+    },
+    {
+      "from": "prefs",
+      "type": "CONSTRAINS",
+      "label": "stelt grenzen aan",
+      "to": "rules"
+    },
+    {
+      "from": "grid",
+      "type": "CONSTRAINS",
+      "label": "kan grenzen opleggen aan",
+      "to": "rules"
+    },
+    {
+      "from": "battery_api",
+      "type": "PRODUCES",
+      "label": "levert status aan",
+      "to": "pipeline"
+    },
+    {
+      "from": "charger_api",
+      "type": "PRODUCES",
+      "label": "levert sessies aan",
+      "to": "pipeline"
+    },
+    {
+      "from": "pipeline",
+      "type": "PRODUCES",
+      "label": "levert actuele gegevens aan",
+      "to": "optim"
+    },
+    {
+      "from": "pipeline",
+      "type": "PRODUCES",
+      "label": "levert inzicht aan",
+      "to": "portal"
+    },
+    {
+      "from": "optim",
+      "type": "VALIDATED_BY",
+      "label": "laat toetsen door",
+      "to": "rules"
+    },
+    {
+      "from": "rules",
+      "type": "INTEGRATES_WITH",
+      "label": "verstuurt opdrachten via",
+      "to": "battery_api"
+    },
+    {
+      "from": "rules",
+      "type": "INTEGRATES_WITH",
+      "label": "verstuurt opdrachten via",
+      "to": "charger_api"
+    },
+    {
+      "from": "monitor",
+      "type": "PRODUCES",
+      "label": "kan aanmaken",
+      "to": "ticket"
+    },
+    {
+      "from": "monitor",
+      "type": "MONITORS",
+      "label": "bewaakt",
+      "to": "pipeline"
+    },
+    {
+      "from": "monitor",
+      "type": "MONITORS",
+      "label": "bewaakt",
+      "to": "battery_api"
+    },
+    {
+      "from": "monitor",
+      "type": "MONITORS",
+      "label": "bewaakt",
+      "to": "charger_api"
+    },
+    {
+      "from": "portal",
+      "type": "MANAGES",
+      "label": "beheert",
+      "to": "prefs"
+    },
+    {
+      "from": "portal",
+      "type": "INTEGRATES_WITH",
+      "label": "vraagt contractstatus op via",
+      "to": "crm_api"
+    },
+    {
+      "from": "customer",
+      "type": "USES",
+      "label": "gebruikt",
+      "to": "app"
+    },
+    {
+      "from": "ems",
+      "type": "DELIVERS_VALUE",
+      "label": "biedt waarde aan",
+      "to": "customer"
+    },
+    {
+      "from": "ems",
+      "type": "DELIVERS_VALUE",
+      "label": "draagt bij aan",
+      "to": "saving"
+    },
+    {
+      "from": "ems",
+      "type": "DELIVERED_BY",
+      "label": "wordt aangeboden door",
+      "to": "energy"
+    },
+    {
+      "from": "ems",
+      "type": "INTEGRATES_WITH",
+      "label": "heeft interface",
+      "to": "app"
+    },
+    {
+      "from": "service",
+      "type": "SERVES",
+      "label": "biedt ondersteuning aan",
+      "to": "customer"
+    },
+    {
+      "from": "service",
+      "type": "DELIVERED_BY",
+      "label": "wordt geleverd via",
+      "to": "installer_partner"
+    },
+    {
+      "from": "service",
+      "type": "USES",
+      "label": "gebruikt",
+      "to": "monitor"
+    },
+    {
+      "from": "service",
+      "type": "INCLUDES",
+      "label": "omvat",
+      "to": "commission"
+    },
+    {
+      "from": "service",
+      "type": "PART_OF",
+      "label": "is onderdeel van",
+      "to": "contract"
+    }
+  ],
+  "views": [
+    {
+      "id": "business",
+      "label": "Commercieel overzicht",
+      "button": "Toon businessbeeld",
+      "audience": "ondernemers en sales",
+      "purpose": "Welke problemen, partijen, verkoopobjecten en producten zijn aan de oplossing verbonden?",
+      "sections": [
+        {
+          "title": "Oplossing",
+          "select": {
+            "types": [
+              "BusinessSolution"
+            ]
+          }
+        },
+        {
+          "title": "Business en partners",
+          "select": {
+            "types": [
+              "Organization",
+              "BusinessValue"
+            ]
+          }
+        },
+        {
+          "title": "Sales",
+          "select": {
+            "types": [
+              "SalesObject"
+            ]
+          }
+        },
+        {
+          "title": "Producten en diensten",
+          "select": {
+            "types": [
+              "Product"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "technical",
+      "label": "Technisch overzicht",
+      "button": "Toon technisch beeld",
+      "audience": "softwareontwikkeling en architectuur",
+      "purpose": "Welke software, dataconcepten en integraties zijn nodig?",
+      "sections": [
+        {
+          "title": "Oplossing en producten",
+          "select": {
+            "types": [
+              "BusinessSolution",
+              "Product"
+            ]
+          }
+        },
+        {
+          "title": "Softwarefuncties",
+          "select": {
+            "types": [
+              "Capability"
+            ]
+          }
+        },
+        {
+          "title": "API’s en koppelingen",
+          "select": {
+            "types": [
+              "Integration"
+            ]
+          }
+        },
+        {
+          "title": "Dataconcepten",
+          "select": {
+            "types": [
+              "DataConcept"
+            ]
+          }
+        },
+        {
+          "title": "Softwareplatform",
+          "select": {
+            "types": [
+              "Infrastructure"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "delivery",
+      "label": "Uitvoering en service",
+      "button": "Toon uitvoering",
+      "audience": "operations en service",
+      "purpose": "Welke activiteiten en technische afhankelijkheden horen bij de oplossing?",
+      "sections": [
+        {
+          "title": "Oplossing",
+          "select": {
+            "types": [
+              "BusinessSolution"
+            ]
+          }
+        },
+        {
+          "title": "Uitvoering",
+          "select": {
+            "types": [
+              "DeliveryActivity"
+            ]
+          }
+        },
+        {
+          "title": "Partijen en systemen",
+          "select": {
+            "types": [
+              "Organization",
+              "Integration",
+              "Infrastructure"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
