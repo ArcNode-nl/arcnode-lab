@@ -6,7 +6,7 @@
   "lang": "nl",
   "start_url": "./",
   "scope": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#070c13",
   "theme_color": "#070c13",
   "icons": [
